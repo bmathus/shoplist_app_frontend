@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
-import 'customwidgets/textfieldwidget.dart';
-import 'customwidgets/buttonwidget.dart';
+import 'package:shoplist_project/home_view.dart';
+import 'customwidgets/TextfieldWidget.dart';
+import 'customwidgets/ButtonWidget.dart';
 
 class LoginView extends StatelessWidget {
+  void gotoHomeView(BuildContext ctx) {
+    Navigator.of(ctx).pushReplacement(
+      MaterialPageRoute(
+        builder: (ctx) => HomeView(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +39,7 @@ class LoginView extends StatelessWidget {
             ButtonWidget(
               title: 'Login',
               hasBorder: false,
-              onTap: () {},
+              onTap: () => gotoHomeView(context),
             ),
           ],
         ),

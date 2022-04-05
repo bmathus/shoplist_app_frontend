@@ -26,7 +26,7 @@ class ButtonWidget extends StatelessWidget {
               : Border.fromBorderSide(BorderSide.none),
         ),
         child: InkWell(
-          onTap: () => onTap,
+          onTap: () => onTap(),
           borderRadius: BorderRadius.circular(10),
           child: Container(
             height: 55,
