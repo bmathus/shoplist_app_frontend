@@ -13,7 +13,7 @@ class UserInfoWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Color.fromARGB(255, 59, 58, 58),
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Color(0xFF355C7D)),
+        border: Border.all(color: Colors.black26, width: 1),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,

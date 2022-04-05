@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:shoplist_project/models/ShopList.dart';
 
 class ShopListWidget extends StatelessWidget {
-  final int id;
-  final int numofppl;
-  final int numofprod;
-  final String listName;
-  final Color color;
+  final ShopList shoplist;
 
   ShopListWidget({
-    required this.id,
-    required this.listName,
-    required this.numofprod,
-    required this.numofppl,
-    required this.color,
+    required this.shoplist,
   });
 
   @override
@@ -23,23 +16,23 @@ class ShopListWidget extends StatelessWidget {
         height: 90,
         child: ListTile(
           onTap: (() {}),
-          title: Text(listName),
+          title: Text(shoplist.listName),
           trailing: Padding(
             padding: const EdgeInsets.only(top: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text("$numofprod products"),
-                numofppl == 0
+                Text("${shoplist.numofprod} products"),
+                shoplist.numofppl == 1
                     ? const Text("Only you")
-                    : Text("$numofppl participants"),
+                    : Text("${shoplist.numofppl} participants"),
               ],
             ),
           ),
         ),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-              colors: [color.withOpacity(0.55), color],
+              colors: [shoplist.color.withOpacity(0.55), shoplist.color],
               begin: Alignment.topLeft,
               end: Alignment.topRight),
           borderRadius: BorderRadius.circular(8),

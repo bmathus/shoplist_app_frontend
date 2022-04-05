@@ -1,55 +1,54 @@
 import 'package:flutter/material.dart';
 import 'ShopList.dart';
 
-const dummyLists = [
+List dLists = const [
   ShopList(
     id: 1,
-    title: 'Italian',
-    color: Colors.purple,
-  ),
-  ShopList(
-    id: 2,
-    title: 'Quick & Easy',
-    color: Colors.red,
-  ),
-  ShopList(
-    id: 3,
-    title: 'Hamburgers',
-    color: Colors.orange,
-  ),
-  ShopList(
-    id: 4,
-    title: 'German',
-    color: Colors.amber,
-  ),
-  ShopList(
-    id: 5,
-    title: 'Light & Lovely',
-    color: Colors.blue,
-  ),
-  ShopList(
-    id: 6,
-    title: 'Exotic',
-    color: Colors.green,
-  ),
-  ShopList(
-    id: 7,
-    title: 'Breakfast',
+    listName: 'Matusov list',
+    numofppl: 1,
+    numofprod: 4,
     color: Colors.lightBlue,
   ),
   ShopList(
-    id: 8,
-    title: 'Asian',
-    color: Colors.lightGreen,
-  ),
-  ShopList(
-    id: 9,
-    title: 'French',
-    color: Colors.pink,
-  ),
-  ShopList(
-    id: 10,
-    title: 'Summer',
+    id: 2,
+    listName: 'Adamov list',
+    numofppl: 1,
+    numofprod: 3,
     color: Colors.teal,
+  ),
+  ShopList(
+    id: 3,
+    listName: 'Luckin list',
+    numofppl: 1,
+    numofprod: 99,
+    color: Colors.deepOrange,
+  ),
+  ShopList(
+    id: 4,
+    listName: 'Zdielany list 1',
+    numofppl: 2,
+    numofprod: 1,
+    color: Colors.indigo,
+  ),
+  ShopList(
+    id: 5,
+    listName: 'Zdielany list 2',
+    numofppl: 7,
+    numofprod: 4,
+    color: Colors.brown,
+  ),
+  ShopList(
+    id: 5,
+    listName: 'Zdielany list 2',
+    numofppl: 7,
+    numofprod: 4,
+    color: Colors.brown,
+  ),
+  ShopList(
+    id: 5,
+    listName: 'Zdielany list 2',
+    numofppl: 7,
+    numofprod: 4,
+    color: Colors.brown,
   ),
 ];
