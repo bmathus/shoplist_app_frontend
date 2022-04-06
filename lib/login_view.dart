@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shoplist_project/home_view.dart';
 import 'customwidgets/TextfieldWidget.dart';
-import 'customwidgets/ButtonWidget.dart';
+import 'customwidgets/LoginButtonWidget.dart';
 
 class LoginView extends StatelessWidget {
   void gotoHomeView(BuildContext ctx) {

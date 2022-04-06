@@ -12,7 +12,10 @@ class DeviderWidget extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 10),
-          child: Text(title),
+          child: Text(
+            title,
+            style: TextStyle(fontSize: 16),
+          ),
         ),
         const Divider(
           indent: 10,

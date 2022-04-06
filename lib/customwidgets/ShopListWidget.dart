@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shoplist_project/models/ShopList.dart';
+import 'package:shoplist_project/list_products_view.dart';
 
 class ShopListWidget extends StatelessWidget {
   final ShopList shoplist;
@@ -8,6 +9,13 @@ class ShopListWidget extends StatelessWidget {
     required this.shoplist,
   });
 
+  void gotoListProductsView(BuildContext ctx) {
+    Navigator.of(ctx).pushReplacement(
+      MaterialPageRoute(
+          builder: (ctx) => ListProductsView(listName: shoplist.name)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -15,17 +23,17 @@ class ShopListWidget extends StatelessWidget {
         margin: const EdgeInsets.only(left: 10, right: 10, bottom: 8),
         height: 90,
         child: ListTile(
-          onTap: (() {}),
-          title: Text(shoplist.listName),
+          onTap: () => gotoListProductsView(context),
+          title: Text(shoplist.name),
           trailing: Padding(
             padding: const EdgeInsets.only(top: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text("${shoplist.numofprod} products"),
-                shoplist.numofppl == 1
+                Text("${shoplist.num_items} products"),
+                shoplist.num_ppl == 1
                     ? const Text("Only you")
-                    : Text("${shoplist.numofppl} participants"),
+                    : Text("${shoplist.num_ppl} participants"),
               ],
             ),
           ),

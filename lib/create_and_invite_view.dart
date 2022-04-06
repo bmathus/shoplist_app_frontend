@@ -5,16 +5,16 @@ class CreateAndInviteView extends StatelessWidget {
   final bool create;
   const CreateAndInviteView(this.create);
 
+  void gotoHomeView(BuildContext ctx) {
+    Navigator.of(ctx).pushReplacement(
+      MaterialPageRoute(
+        builder: (ctx) => HomeView(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    void gotoHomeView(BuildContext ctx) {
-      Navigator.of(ctx).pushReplacement(
-        MaterialPageRoute(
-          builder: (ctx) => HomeView(),
-        ),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
         title:

@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 
 class ShopList {
   final int id;
-  final String listName;
+  final String name;
+  final int num_ppl;
+  final int num_items;
+  final String invite_code;
   final Color color; //bude backround color kategorie
-  final int numofppl;
-  final int numofprod;
 
   const ShopList(
       {required this.id,
-      required this.listName,
+      required this.name,
       required this.color,
-      required this.numofppl,
-      required this.numofprod});
+      required this.num_ppl,
+      required this.num_items,
+      required this.invite_code});
 }
