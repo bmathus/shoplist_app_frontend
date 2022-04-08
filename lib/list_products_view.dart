@@ -28,7 +28,8 @@ class _ListProductsViewState extends State<ListProductsView> {
 
   void gotoProductView(BuildContext ctx, bool edit) {
     Navigator.of(ctx).push(
-      MaterialPageRoute(builder: (ctx) => ProductView(edit, null)),
+      MaterialPageRoute(
+          builder: (ctx) => ProductView(widget.listName, edit, null)),
     );
   }
 
@@ -45,7 +46,15 @@ class _ListProductsViewState extends State<ListProductsView> {
   }
 
   @override
+  void initState() {
+    print("Prvy build listu produktov");
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    print("Buildujem list produktov");
     final mediaQuery = MediaQuery.of(context);
 
     AppBar appBar = AppBar(
@@ -77,10 +86,11 @@ class _ListProductsViewState extends State<ListProductsView> {
       ),
     );
 
-    List boughtProducts = [];
-    List notboughtProducts = [];
+    Widget makeProductWidgets() {
+      List boughtProducts = [];
+      List notboughtProducts = [];
 
-    void makeProductWidgets() {
+      print("buildujem produkty");
       Widget divider = const Divider(
         color: Color.fromARGB(66, 255, 255, 255),
         thickness: 1,
@@ -88,9 +98,11 @@ class _ListProductsViewState extends State<ListProductsView> {
       );
       dProducts.forEach((product) {
         if (product.bought) {
-          boughtProducts.add(ProductItemWidget(product, reBuild));
+          boughtProducts
+              .add(ProductItemWidget(widget.listName, product, reBuild));
         } else {
-          notboughtProducts.add(ProductItemWidget(product, reBuild));
+          notboughtProducts
+              .add(ProductItemWidget(widget.listName, product, reBuild));
         }
       });
 
@@ -100,40 +112,58 @@ class _ListProductsViewState extends State<ListProductsView> {
       if (notboughtProducts.isNotEmpty) {
         notboughtProducts.add(divider);
       }
-    }
 
-    makeProductWidgets();
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Align(child: deleteButton, alignment: Alignment.centerRight),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: refresh,
+              child: (boughtProducts.isNotEmpty || notboughtProducts.isNotEmpty)
+                  ? ListView(children: [
+                      ...notboughtProducts,
+                      boughtProducts.isNotEmpty
+                          ? const Padding(
+                              padding: EdgeInsets.only(top: 8, bottom: 5),
+                              child: DeviderWidget("Bought products"),
+                            )
+                          : const SizedBox(),
+                      ...boughtProducts,
+                    ])
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          "assets/list-is-empty.png",
+                          color: Color.fromARGB(83, 89, 89, 89),
+                        ),
+                        SizedBox(height: 10),
+                        const Text(
+                          "No products",
+                          style: TextStyle(
+                            color: Color.fromARGB(111, 89, 89, 89),
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      ],
+                    ),
+            ),
+          ),
+          SizedBox(height: 8),
+          ButtonWidget("Add product", () => gotoProductView(context, false)),
+          SizedBox(height: 8)
+        ],
+      );
+    }
 
     return Scaffold(
       appBar: appBar,
       body: SafeArea(
         child: selectedIndexNavBar == 0
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Align(child: deleteButton, alignment: Alignment.centerRight),
-                  Expanded(
-                    child: RefreshIndicator(
-                      onRefresh: refresh,
-                      child: ListView(children: [
-                        ...notboughtProducts,
-                        boughtProducts.isNotEmpty
-                            ? const Padding(
-                                padding: EdgeInsets.only(top: 8, bottom: 5),
-                                child: DeviderWidget("Bought products"),
-                              )
-                            : const SizedBox(),
-                        ...boughtProducts,
-                      ]),
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  ButtonWidget(
-                      "Add product", () => gotoProductView(context, false)),
-                  SizedBox(height: 8)
-                ],
-              )
-            : ParticipantsView(),
+            ? makeProductWidgets()
+            : const ParticipantsView(),
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Color.fromARGB(255, 0, 158, 142),

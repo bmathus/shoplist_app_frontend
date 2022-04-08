@@ -16,7 +16,10 @@ class ParticipantsView extends StatelessWidget {
       child: ListTile(
         onTap: () {},
         contentPadding: EdgeInsets.zero,
-        title: Text("User info"),
+        title: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Text("User info"),
+        ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -28,7 +31,7 @@ class ParticipantsView extends StatelessWidget {
               width: 0,
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 2),
               child: IconButton(
                 icon: Icon(Icons.phone),
                 onPressed: () {},
@@ -52,6 +55,37 @@ class ParticipantsView extends StatelessWidget {
             ],
           ),
         ),
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+              color: Color.fromARGB(255, 59, 58, 58),
+              border: Border.all(color: Colors.black26)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "Invite users with this code:",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 5),
+              Text("iufdsaijnjnkfdsonjdss"),
+              SizedBox(height: 5),
+              ElevatedButton(
+                onPressed: () {},
+                child: Text("Copy code"),
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(Color(0xFF355C7D)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    )),
+              )
+            ],
+          ),
+        )
       ],
     );
   }

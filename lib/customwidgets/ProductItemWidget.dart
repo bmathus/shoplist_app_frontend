@@ -5,13 +5,14 @@ import 'package:shoplist_project/models/dummyLists.dart';
 
 class ProductItemWidget extends StatelessWidget {
   final Product product;
+  final String listName;
   final Function reBuild;
 
-  ProductItemWidget(this.product, this.reBuild);
+  ProductItemWidget(this.listName, this.product, this.reBuild);
 
   void gotoProductView(BuildContext ctx, bool edit) {
     Navigator.of(ctx).push(
-      MaterialPageRoute(builder: (ctx) => ProductView(edit, product)),
+      MaterialPageRoute(builder: (ctx) => ProductView(listName, edit, product)),
     );
   }
 
