@@ -9,6 +9,7 @@ class TextFieldWidget extends StatefulWidget {
   double bottom;
   double left;
   double right;
+  TextInputType keyboardType;
 
   TextFieldWidget(
       {required this.title,
@@ -18,7 +19,8 @@ class TextFieldWidget extends StatefulWidget {
       this.top = 0,
       this.bottom = 0,
       this.left = 0,
-      this.right = 0});
+      this.right = 0,
+      this.keyboardType = TextInputType.text});
 
   @override
   State<TextFieldWidget> createState() => _TextFieldWidgetState();
@@ -43,6 +45,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         children: [
           Text(widget.title),
           TextField(
+            keyboardType: widget.keyboardType,
             controller: widget.controller,
             style: TextStyle(fontSize: 14),
             cursorColor: Color(0xFF355C7D),

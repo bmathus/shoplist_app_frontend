@@ -3,7 +3,7 @@ class Product {
   String name;
   double quantity;
   String unit;
-  bool? bought;
+  bool bought;
   String picture_base64;
 
   Product({

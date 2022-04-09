@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:shoplist_project/models/Product.dart';
+import 'package:shoplist_project/models/ShopList.dart';
 import 'package:shoplist_project/product_view.dart';
 import 'package:shoplist_project/models/dummyLists.dart';
 
 class ProductItemWidget extends StatelessWidget {
   final Product product;
-  final String listName;
+  final ShopList shoplist;
   final Function reBuild;
 
-  ProductItemWidget(this.listName, this.product, this.reBuild);
+  ProductItemWidget(this.shoplist, this.product, this.reBuild);
 
   void gotoProductView(BuildContext ctx, bool edit) {
     Navigator.of(ctx).push(
-      MaterialPageRoute(builder: (ctx) => ProductView(listName, edit, product)),
+      MaterialPageRoute(builder: (ctx) => ProductView(shoplist, edit, product)),
     );
   }
 
@@ -34,7 +35,7 @@ class ProductItemWidget extends StatelessWidget {
           activeColor: Color.fromARGB(255, 12, 162, 147),
           value: product.bought,
           onChanged: (value) {
-            product.bought = value;
+            product.bought = value!;
             reBuild();
           },
         ),
@@ -60,7 +61,7 @@ class ProductItemWidget extends StatelessWidget {
               child: IconButton(
                 icon: Icon(Icons.delete_rounded),
                 onPressed: () {
-                  dProducts.remove(product);
+                  shoplist.products.remove(product);
                   reBuild();
                 },
               ),

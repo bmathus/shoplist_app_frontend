@@ -12,7 +12,9 @@ class ShopListWidget extends StatelessWidget {
   void gotoListProductsView(BuildContext ctx) {
     Navigator.of(ctx).pushReplacement(
       MaterialPageRoute(
-          builder: (ctx) => ListProductsView(listName: shoplist.name)),
+          builder: (ctx) => ListProductsView(
+                shoplist: shoplist,
+              )),
     );
   }
 

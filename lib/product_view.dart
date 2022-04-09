@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import './models/Product.dart';
 import 'package:shoplist_project/customwidgets/TextFieldWidget.dart';
 import 'package:shoplist_project/customwidgets/ButtonWidget.dart';
-import './list_products_view.dart';
+import 'package:shoplist_project/models/ShopList.dart';
 
 class ProductView extends StatefulWidget {
   final bool edit;
-  final String listName;
+  final ShopList shoplist;
   final Product? product;
 
   ProductView(
-    this.listName,
+    this.shoplist,
     this.edit,
     this.product,
   );
@@ -100,6 +100,7 @@ class _ProductViewState extends State<ProductView> {
                   children: [
                     Expanded(
                       child: TextFieldWidget(
+                        keyboardType: TextInputType.number,
                         controller: quantityController,
                         title: "Quantity",
                         hintText: "enter quantity",
