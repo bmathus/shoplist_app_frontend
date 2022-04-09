@@ -17,6 +17,14 @@ class ProductItemWidget extends StatelessWidget {
     );
   }
 
+  String outputQuantity(var n) {
+    if (n == null) {
+      return "";
+    } else {
+      return n.toStringAsFixed(n.truncateToDouble() == n ? 0 : 1);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -45,7 +53,7 @@ class ProductItemWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Text(
-                "${product.quantity} ${product.unit}",
+                "${outputQuantity(product.quantity)} ${product.unit ?? ""}",
                 style: TextStyle(fontSize: 15),
               ),
             ),

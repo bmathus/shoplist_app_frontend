@@ -26,21 +26,46 @@ class _ProductViewState extends State<ProductView> {
 
   TextEditingController unitController = TextEditingController();
 
-  bool validate = false;
-
-  void printing() {
-    print(quantityController.text == "");
-  }
+  bool validateName = false;
 
   @override
   void initState() {
     if (widget.edit) {
       nameController.text = widget.product!.name;
       quantityController.text = widget.product!.quantity.toString();
-      unitController.text = widget.product!.unit;
+      unitController.text = widget.product!.unit!;
     }
 
     super.initState();
+  }
+
+  void addProduct() {
+    if (nameController.text.isEmpty) {
+      setState(() {
+        validateName = true;
+      });
+    } else {
+      validateName = false;
+      if (quantityController.text.contains(',')) {
+        quantityController.text =
+            quantityController.text.replaceFirst(RegExp(','), '.');
+      }
+
+      print(quantityController.text);
+      widget.shoplist.products.add(
+        Product(
+          picture_base64: "fdsagfa",
+          quantity: quantityController.text == ""
+              ? null
+              : double.parse(quantityController.text),
+          unit: unitController.text == "" ? null : unitController.text,
+          bought: false,
+          id: 0,
+          name: nameController.text,
+        ),
+      );
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -87,7 +112,7 @@ class _ProductViewState extends State<ProductView> {
                         ),
                 ),
                 TextFieldWidget(
-                  errorText: validate ? "Name is required" : null,
+                  errorText: validateName ? "Name is required" : null,
                   controller: nameController,
                   title: "Product name",
                   hintText: "Enter name",
@@ -123,12 +148,7 @@ class _ProductViewState extends State<ProductView> {
                 ),
                 Spacer(),
                 ButtonWidget(
-                    widget.edit ? "Save" : "Add product",
-                    () => setState(() {
-                          nameController.text.isEmpty
-                              ? validate = true
-                              : validate = false;
-                        })),
+                    widget.edit ? "Save" : "Add product", () => addProduct()),
                 SizedBox(
                   height: 10,
                 )

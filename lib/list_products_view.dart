@@ -28,10 +28,12 @@ class _ListProductsViewState extends State<ListProductsView> {
   }
 
   void gotoProductView(BuildContext ctx, bool edit) {
-    Navigator.of(ctx).push(
-      MaterialPageRoute(
-          builder: (ctx) => ProductView(widget.shoplist, edit, null)),
-    );
+    Navigator.of(ctx)
+        .push(
+          MaterialPageRoute(
+              builder: (ctx) => ProductView(widget.shoplist, edit, null)),
+        )
+        .then((_) => setState(() {}));
   }
 
   void onNavItemTapped(int index) {
