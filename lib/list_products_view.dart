@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shoplist_project/customwidgets/DeviderWidget.dart';
 import 'package:shoplist_project/models/ShopList.dart';
-
 import './home_view.dart';
 import 'package:shoplist_project/customwidgets/ProductItemWidget.dart';
 import 'customwidgets/ButtonWidget.dart';
@@ -69,12 +68,46 @@ class _ListProductsViewState extends State<ListProductsView> {
       ),
     );
 
+    ButtonStyle buttonstyle(Color color) => ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(color),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+
+    AlertDialog alert = AlertDialog(
+      title: Text('Delete ${widget.shoplist.name}?'),
+      content: Text('Are you sure you want to delete ${widget.shoplist.name}'),
+      actions: <Widget>[
+        ElevatedButton(
+          child: Text("Delete"),
+          style: buttonstyle(Color.fromARGB(255, 104, 59, 64)),
+          onPressed: () {
+            Navigator.pop(context, 'Delete');
+          },
+        ),
+        ElevatedButton(
+          child: Text("Cancel"),
+          style: buttonstyle(Color(0xFF355C7D)),
+          onPressed: () {
+            Navigator.pop(context, 'Cancel');
+          },
+        )
+      ],
+    );
+
     Widget deleteButton = Container(
       height: 32,
       width: 100,
       margin: EdgeInsets.all(6),
       child: ElevatedButton.icon(
-        onPressed: () {},
+        onPressed: () => showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return alert;
+            }),
         icon: Icon(Icons.close_rounded),
         label: Text("Delete"),
         style: ButtonStyle(
@@ -89,33 +122,10 @@ class _ListProductsViewState extends State<ListProductsView> {
       ),
     );
 
-    Widget makeProductWidgets() {
-      List boughtProducts = [];
-      List notboughtProducts = [];
+    List boughtProducts = [];
+    List notboughtProducts = [];
 
-      print("buildujem produkty");
-      Widget divider = const Divider(
-        color: Color.fromARGB(66, 255, 255, 255),
-        thickness: 1,
-        height: 0,
-      );
-      widget.shoplist.products.forEach((product) {
-        if (product.bought) {
-          boughtProducts
-              .add(ProductItemWidget(widget.shoplist, product, reBuild));
-        } else {
-          notboughtProducts
-              .add(ProductItemWidget(widget.shoplist, product, reBuild));
-        }
-      });
-
-      if (boughtProducts.isNotEmpty) {
-        boughtProducts.add(divider);
-      }
-      if (notboughtProducts.isNotEmpty) {
-        notboughtProducts.add(divider);
-      }
-
+    Widget buildProductListUI() {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -159,6 +169,32 @@ class _ListProductsViewState extends State<ListProductsView> {
           SizedBox(height: 8)
         ],
       );
+    }
+
+    Widget makeProductWidgets() {
+      print("buildujem produkty");
+      Widget divider = const Divider(
+        color: Color.fromARGB(66, 255, 255, 255),
+        thickness: 1,
+        height: 0,
+      );
+      widget.shoplist.products.forEach((product) {
+        if (product.bought) {
+          boughtProducts
+              .add(ProductItemWidget(widget.shoplist, product, reBuild));
+        } else {
+          notboughtProducts
+              .add(ProductItemWidget(widget.shoplist, product, reBuild));
+        }
+      });
+
+      if (boughtProducts.isNotEmpty) {
+        boughtProducts.add(divider);
+      }
+      if (notboughtProducts.isNotEmpty) {
+        notboughtProducts.add(divider);
+      }
+      return buildProductListUI();
     }
 
     return Scaffold(

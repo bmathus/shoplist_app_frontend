@@ -4,17 +4,26 @@ import 'package:shoplist_project/models/ShopList.dart';
 import 'package:shoplist_project/product_view.dart';
 import 'package:shoplist_project/models/dummyLists.dart';
 
-class ProductItemWidget extends StatelessWidget {
+class ProductItemWidget extends StatefulWidget {
   final Product product;
   final ShopList shoplist;
   final Function reBuild;
 
   ProductItemWidget(this.shoplist, this.product, this.reBuild);
 
+  @override
+  State<ProductItemWidget> createState() => _ProductItemWidgetState();
+}
+
+class _ProductItemWidgetState extends State<ProductItemWidget> {
   void gotoProductView(BuildContext ctx, bool edit) {
-    Navigator.of(ctx).push(
-      MaterialPageRoute(builder: (ctx) => ProductView(shoplist, edit, product)),
-    );
+    Navigator.of(ctx)
+        .push(
+          MaterialPageRoute(
+              builder: (ctx) =>
+                  ProductView(widget.shoplist, edit, widget.product)),
+        )
+        .then((value) => setState(() {}));
   }
 
   String outputQuantity(var n) {
@@ -35,16 +44,16 @@ class ProductItemWidget extends StatelessWidget {
         ),
       ),
       child: ListTile(
-        title: Text(product.name),
+        title: Text(widget.product.name),
         onTap: () => gotoProductView(context, true),
         contentPadding: EdgeInsets.zero,
         horizontalTitleGap: 0,
         leading: Checkbox(
           activeColor: Color.fromARGB(255, 12, 162, 147),
-          value: product.bought,
+          value: widget.product.bought,
           onChanged: (value) {
-            product.bought = value!;
-            reBuild();
+            widget.product.bought = value!;
+            widget.reBuild();
           },
         ),
         trailing: Row(
@@ -53,7 +62,7 @@ class ProductItemWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Text(
-                "${outputQuantity(product.quantity)} ${product.unit ?? ""}",
+                "${outputQuantity(widget.product.quantity)} ${widget.product.unit ?? ""}",
                 style: TextStyle(fontSize: 15),
               ),
             ),
@@ -69,8 +78,8 @@ class ProductItemWidget extends StatelessWidget {
               child: IconButton(
                 icon: Icon(Icons.delete_rounded),
                 onPressed: () {
-                  shoplist.products.remove(product);
-                  reBuild();
+                  widget.shoplist.products.remove(widget.product);
+                  widget.reBuild();
                 },
               ),
             ),

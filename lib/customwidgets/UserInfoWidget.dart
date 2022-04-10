@@ -39,6 +39,25 @@ class UserInfoWidget extends StatelessWidget {
               ),
               Text("bojko.matus@gmail.com"),
             ],
+          ),
+          Spacer(),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text("Log-out"),
+            style: ButtonStyle(
+              backgroundColor:
+                  MaterialStateProperty.all(Color.fromARGB(255, 104, 59, 64)),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 10,
           )
         ],
       ),

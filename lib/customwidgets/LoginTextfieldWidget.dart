@@ -6,17 +6,21 @@ class TextFieldWidget extends StatelessWidget {
   final IconData? rightIcon;
   final bool hideText;
   final Function(String)? onCh;
+  final TextEditingController controller;
 
   TextFieldWidget(
       {required this.hintText,
       required this.leftIcon,
       this.rightIcon,
       required this.hideText,
-      this.onCh});
+      this.onCh,
+      required this.controller});
 
   @override
   Widget build(BuildContext context) {
+    print("buldujem texhfield widget");
     return TextField(
+      controller: controller,
       onChanged: onCh,
       obscureText: hideText,
       style: const TextStyle(

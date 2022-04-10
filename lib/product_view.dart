@@ -32,14 +32,16 @@ class _ProductViewState extends State<ProductView> {
   void initState() {
     if (widget.edit) {
       nameController.text = widget.product!.name;
-      quantityController.text = widget.product!.quantity.toString();
-      unitController.text = widget.product!.unit!;
+      quantityController.text = widget.product!.quantity == null
+          ? ""
+          : widget.product!.quantity.toString();
+      unitController.text = (widget.product!.unit ?? "");
     }
 
     super.initState();
   }
 
-  void addProduct() {
+  void add_edit_Product() {
     if (nameController.text.isEmpty) {
       setState(() {
         validateName = true;
@@ -50,20 +52,28 @@ class _ProductViewState extends State<ProductView> {
         quantityController.text =
             quantityController.text.replaceFirst(RegExp(','), '.');
       }
+      if (widget.edit) {
+        widget.product!.name = nameController.text;
+        widget.product!.unit =
+            unitController.text == "" ? null : unitController.text;
+        widget.product!.quantity = quantityController.text == ""
+            ? null
+            : double.parse(quantityController.text);
+      } else {
+        widget.shoplist.products.add(
+          Product(
+            id: 0,
+            name: nameController.text,
+            quantity: quantityController.text == ""
+                ? null
+                : double.parse(quantityController.text),
+            unit: unitController.text == "" ? null : unitController.text,
+            bought: false,
+            picture_base64: "fdsagfa",
+          ),
+        );
+      }
 
-      print(quantityController.text);
-      widget.shoplist.products.add(
-        Product(
-          picture_base64: "fdsagfa",
-          quantity: quantityController.text == ""
-              ? null
-              : double.parse(quantityController.text),
-          unit: unitController.text == "" ? null : unitController.text,
-          bought: false,
-          id: 0,
-          name: nameController.text,
-        ),
-      );
       Navigator.of(context).pop();
     }
   }
@@ -86,30 +96,50 @@ class _ProductViewState extends State<ProductView> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 59, 58, 58),
-                    border: Border.all(color: Colors.black26),
-                  ),
-                  width: double.infinity,
-                  height: (mediaQuery.size.height -
-                          appBar.preferredSize.height -
-                          mediaQuery.padding.top) *
-                      0.45,
-                  child: widget.edit
-                      ? Image.asset(
-                          "assets/fruit.jpg",
-                          fit: BoxFit.cover,
-                        )
-                      : const Center(
-                          child: Text(
-                            "Product picture",
-                            style: TextStyle(
-                              fontSize: 30,
-                              color: Color.fromARGB(255, 0, 158, 142),
+                Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 59, 58, 58),
+                        border: Border.all(color: Colors.black26),
+                      ),
+                      width: double.infinity,
+                      height: (mediaQuery.size.height -
+                              appBar.preferredSize.height -
+                              mediaQuery.padding.top) *
+                          0.45,
+                      child: widget.edit
+                          ? Image.asset(
+                              "assets/fruit.jpg",
+                              fit: BoxFit.cover,
+                            )
+                          : const Center(
+                              child: Text(
+                                "Add product picture",
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  color: Color.fromARGB(122, 255, 255, 255),
+                                ),
+                              ),
                             ),
-                          ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        child: Icon(
+                          Icons.photo_library_rounded,
+                          size: 30,
                         ),
+                        style: ElevatedButton.styleFrom(
+                            elevation: 8,
+                            primary: Color(0xFF355C7D),
+                            shape: CircleBorder(),
+                            padding: EdgeInsets.all(10)),
+                      ),
+                    ),
+                  ],
                 ),
                 TextFieldWidget(
                   errorText: validateName ? "Name is required" : null,
@@ -147,8 +177,8 @@ class _ProductViewState extends State<ProductView> {
                   ],
                 ),
                 Spacer(),
-                ButtonWidget(
-                    widget.edit ? "Save" : "Add product", () => addProduct()),
+                ButtonWidget(widget.edit ? "Save" : "Add product",
+                    () => add_edit_Product()),
                 SizedBox(
                   height: 10,
                 )
