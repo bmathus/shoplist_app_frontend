@@ -79,7 +79,7 @@ class _ListProductsViewState extends State<ListProductsView> {
 
     AlertDialog alert = AlertDialog(
       title: Text('Delete ${widget.shoplist.name}?'),
-      content: Text('Are you sure you want to delete ${widget.shoplist.name}'),
+      content: Text('Are you sure you want to delete ${widget.shoplist.name}?'),
       actions: <Widget>[
         ElevatedButton(
           child: Text("Delete"),
