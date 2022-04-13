@@ -1,49 +1,102 @@
 import 'package:flutter/material.dart';
+import 'package:shoplist_project/models/ShopLists.dart';
 import './customwidgets/UserInfoWidget.dart';
 import './customwidgets/ShopListWidget.dart';
-import './models/dummyLists.dart';
 import './customwidgets/DeviderWidget.dart';
 import 'create_and_invite_view.dart';
 import 'customwidgets/ButtonWidget.dart';
+import 'models/UserAuth.dart';
 
-class HomeView extends StatelessWidget {
-  HomeView({Key? key}) : super(key: key);
+class HomeView extends StatefulWidget {
+  final AuthUser user;
+  late ShopLists lists;
+
+  HomeView({required this.user});
+
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  bool listsLoading = false;
 
   AppBar appBar = AppBar(
-    title: Text('Home'),
+    title: const Text('Home'),
     centerTitle: true,
   );
 
   void gotoCreateAndInviteView(BuildContext ctx, bool create) {
-    Navigator.of(ctx).pushReplacement(
+    Navigator.of(ctx).push(
       MaterialPageRoute(
-        builder: (ctx) => CreateAndInviteView(create),
+        builder: (ctx) => CreateAndInviteView(
+          create: create,
+          lists: widget.lists,
+          rebuildHomeView: () => setState(() {}),
+        ),
       ),
     );
   }
 
-  List<Widget> getHomeUI() {
-    List<Widget> widgets = [UserInfoWidget()];
-    bool shared = false;
-    var numoflists = dLists.length;
-    if (dLists.isNotEmpty) {
-      if (dLists[0].num_ppl == 1) {
-        widgets.add(const DeviderWidget("Private lists"));
-      }
-      for (var i = 0; i < numoflists; i++) {
-        if (dLists[i].num_ppl != 1 && shared == false) {
-          shared = true;
-          widgets.add(DeviderWidget("SharedLists"));
-        }
-        widgets.add(ShopListWidget(shoplist: dLists[i]));
+  Future<void> refresh() async {
+    try {
+      await widget.lists.fetchShopLists();
+      setState(() {});
+    } catch (e) {}
+  }
+
+  void loadLists() async {
+    widget.lists = ShopLists(token: widget.user.token);
+    setState(() {
+      listsLoading = true;
+    });
+    try {
+      await widget.lists.fetchShopLists();
+    } on Exception catch (e) {
+      if (e.toString() == "Exception: No connection") {
+        widget.user.showErrorDialog("No connection", context);
+      } else {
+        widget.user.showErrorDialog("Something went wrong", context);
       }
     }
-    return widgets;
+    setState(() {
+      listsLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    loadLists();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
+
+    List privateLists = [];
+    List sharedLists = [];
+
+    List<Widget> getHomeUI() {
+      widget.lists.allLists.forEach((list) {
+        if (list.num_ppl == 1) {
+          privateLists.add(ShopListWidget(shoplist: list, user: widget.user));
+        } else {
+          sharedLists.add(ShopListWidget(shoplist: list, user: widget.user));
+        }
+      });
+
+      return [
+        UserInfoWidget(user: widget.user),
+        privateLists.isNotEmpty
+            ? const DeviderWidget("Private lists")
+            : const SizedBox(),
+        ...privateLists,
+        sharedLists.isNotEmpty
+            ? const DeviderWidget("Shared lists")
+            : const SizedBox(),
+        ...sharedLists,
+      ];
+    }
 
     return Scaffold(
       appBar: appBar,
@@ -52,7 +105,13 @@ class HomeView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
-              child: ListView(children: getHomeUI()),
+              child: listsLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : RefreshIndicator(
+                      child: ListView(children: getHomeUI()),
+                      onRefresh: refresh),
             ),
             const SizedBox(
               height: 8,

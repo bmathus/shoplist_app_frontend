@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import './models/Product.dart';
 import 'package:shoplist_project/customwidgets/TextFieldWidget.dart';
 import 'package:shoplist_project/customwidgets/ButtonWidget.dart';
-import 'package:shoplist_project/models/ShopList.dart';
+import 'package:shoplist_project/models/ShopLists.dart';
 
 class ProductView extends StatefulWidget {
   final bool edit;

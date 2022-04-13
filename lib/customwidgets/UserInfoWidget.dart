@@ -1,10 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shoplist_project/home_view.dart';
+import 'package:shoplist_project/login_view.dart';
+import 'package:shoplist_project/models/UserAuth.dart';
 
 class UserInfoWidget extends StatelessWidget {
-  const UserInfoWidget({Key? key}) : super(key: key);
+  final AuthUser user;
+  const UserInfoWidget({required this.user});
 
   @override
   Widget build(BuildContext context) {
+    void logout() async {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.clear();
+      print("email pri loggout ${user.email}");
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (ctx) => LoginView(user: user),
+        ),
+      );
+    }
+
     return Container(
       height: 77,
       padding: EdgeInsets.all(5),
@@ -29,22 +46,20 @@ class UserInfoWidget extends StatelessWidget {
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
-                "Matus",
+                user.name,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
               ),
-              Text("bojko.matus@gmail.com"),
+              Text(user.email),
             ],
           ),
           Spacer(),
           ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+            onPressed: () => logout(),
             child: Text("Log-out"),
             style: ButtonStyle(
               backgroundColor:

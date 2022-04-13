@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:shoplist_project/customwidgets/DeviderWidget.dart';
-import 'package:shoplist_project/models/ShopList.dart';
+import 'package:shoplist_project/models/ShopLists.dart';
 import './home_view.dart';
 import 'package:shoplist_project/customwidgets/ProductItemWidget.dart';
 import 'customwidgets/ButtonWidget.dart';
 import 'package:shoplist_project/product_view.dart';
 import './participants_view.dart';
+import 'models/UserAuth.dart';
 
 class ListProductsView extends StatefulWidget {
   final ShopList shoplist;
-  const ListProductsView({required this.shoplist});
+  final AuthUser user;
+  const ListProductsView({required this.shoplist, required this.user});
 
   @override
   State<ListProductsView> createState() => _ListProductsViewState();
@@ -17,14 +19,6 @@ class ListProductsView extends StatefulWidget {
 
 class _ListProductsViewState extends State<ListProductsView> {
   int selectedIndexNavBar = 0;
-
-  void gotoHomeView(BuildContext ctx) {
-    Navigator.of(ctx).pushReplacement(
-      MaterialPageRoute(
-        builder: (ctx) => HomeView(),
-      ),
-    );
-  }
 
   void gotoProductView(BuildContext ctx, bool edit) {
     Navigator.of(ctx)
@@ -64,7 +58,7 @@ class _ListProductsViewState extends State<ListProductsView> {
       centerTitle: true,
       leading: IconButton(
         icon: Icon(Icons.home_rounded, size: 30),
-        onPressed: () => gotoHomeView(context),
+        onPressed: () => Navigator.of(context).pop(),
       ),
     );
 

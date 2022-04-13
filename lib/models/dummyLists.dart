@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shoplist_project/models/Participant.dart';
 import 'Product.dart';
-import 'ShopList.dart';
+import 'ShopLists.dart';
+import 'UserAuth.dart';
 
 List<Product> dProducts = [
   Product(
@@ -61,15 +63,24 @@ List<Product> dProducts = [
       name: "Oriesky"),
 ];
 
-List<User> dParticipants = [
-  User(id: 1, name: "Matus", email: "bojko@email.com"),
-  User(id: 2, name: "Jozef", email: "bojko@email.com"),
-  User(id: 3, name: "Adam", email: "bojko@email.com"),
-  User(id: 4, name: "Marek", email: "bojko@email.com"),
-  User(id: 5, name: "Miro", email: "bojko@email.com"),
-  User(id: 6, name: "Sebastian", email: "bojko@email.com"),
-  User(id: 7, name: "Marian", email: "bojko@email.com"),
-  User(id: 8, name: "Michal", email: "bojko@email.com")
+List<Participant> dParticipants = [
+  Participant(id: 1, name: "Matus", email: "bojko@email.com"),
+  Participant(id: 2, name: "Jozef", email: "bojko@email.com"),
+  Participant(id: 3, name: "Adam", email: "bojko@email.com"),
+  Participant(id: 4, name: "Marek", email: "bojko@email.com"),
+  Participant(id: 5, name: "Miro", email: "bojko@email.com"),
+  Participant(id: 6, name: "Sebastian", email: "bojko@email.com"),
+  Participant(id: 7, name: "Marian", email: "bojko@email.com"),
+  Participant(id: 8, name: "Michal", email: "bojko@email.com")
+];
+List<Product> dProducts2 = [
+  Product(
+      picture_base64: "fsdahfdsji",
+      quantity: 3989,
+      unit: "pkg",
+      bought: false,
+      id: 3,
+      name: "Exclusive"),
 ];
 
 List<ShopList> dLists = [
@@ -78,7 +89,6 @@ List<ShopList> dLists = [
       name: 'Matusov list',
       num_ppl: 1,
       num_items: 4,
-      color: Colors.lightBlue,
       invite_code: "hufdhsuifds",
       products: dProducts,
       users: dParticipants),
@@ -87,7 +97,6 @@ List<ShopList> dLists = [
       name: 'Adamov list',
       num_ppl: 1,
       num_items: 3,
-      color: Colors.teal,
       invite_code: "FHJIDOHJ",
       products: dProducts,
       users: dParticipants),
@@ -96,7 +105,6 @@ List<ShopList> dLists = [
       name: 'Luckin list',
       num_ppl: 1,
       num_items: 99,
-      color: Colors.deepOrange,
       invite_code: "uifhids",
       products: dProducts,
       users: dParticipants),
@@ -105,16 +113,14 @@ List<ShopList> dLists = [
       name: 'Zdielany list 1',
       num_ppl: 2,
       num_items: 1,
-      color: Colors.indigo,
       invite_code: "jifosdj",
-      products: dProducts,
+      products: dProducts2,
       users: dParticipants),
   ShopList(
       id: 5,
       name: 'Zdielany list 2',
       num_ppl: 7,
       num_items: 4,
-      color: Colors.brown,
       invite_code: "jiofsdf",
       products: dProducts,
       users: dParticipants),
@@ -123,7 +129,6 @@ List<ShopList> dLists = [
       name: 'Zdielany list 2',
       num_ppl: 7,
       num_items: 4,
-      color: Colors.brown,
       invite_code: "fbndujsifds",
       products: dProducts,
       users: dParticipants),
@@ -132,7 +137,6 @@ List<ShopList> dLists = [
       name: 'Zdielany list 2',
       num_ppl: 7,
       num_items: 4,
-      color: Colors.brown,
       invite_code: "nifojdiosjo",
       products: dProducts,
       users: dParticipants),

@@ -8,13 +8,14 @@ class TextFieldWidget extends StatelessWidget {
   final Function(String)? onCh;
   final TextEditingController controller;
 
-  TextFieldWidget(
-      {required this.hintText,
-      required this.leftIcon,
-      this.rightIcon,
-      required this.hideText,
-      this.onCh,
-      required this.controller});
+  TextFieldWidget({
+    required this.hintText,
+    required this.leftIcon,
+    this.rightIcon,
+    required this.hideText,
+    this.onCh,
+    required this.controller,
+  });
 
   @override
   Widget build(BuildContext context) {

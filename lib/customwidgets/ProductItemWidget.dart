@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shoplist_project/models/Product.dart';
-import 'package:shoplist_project/models/ShopList.dart';
+import 'package:shoplist_project/models/ShopLists.dart';
 import 'package:shoplist_project/product_view.dart';
 import 'package:shoplist_project/models/dummyLists.dart';
 

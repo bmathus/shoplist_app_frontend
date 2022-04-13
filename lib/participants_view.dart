@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:shoplist_project/models/ShopList.dart';
+import 'package:shoplist_project/models/Participant.dart';
+import 'package:shoplist_project/models/ShopLists.dart';
+import 'package:shoplist_project/models/UserAuth.dart';
 import 'customwidgets/DeviderWidget.dart';
 import 'package:flutter/services.dart';
 
 class ParticipantsView extends StatelessWidget {
-  List<User> participants;
+  List<Participant> participants;
   String invite_code;
 
   ParticipantsView({
