@@ -53,6 +53,7 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(30.0),
@@ -60,6 +61,14 @@ class _LoginViewState extends State<LoginView> {
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Container(
+                height: (mediaQuery.size.height - mediaQuery.padding.top) * 0.3,
+                child: Image.asset(
+                  "applogo.png",
+                )),
+            const SizedBox(
+              height: 50,
+            ),
             TextFieldWidget(
               controller: emailController,
               hintText: 'Email',

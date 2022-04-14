@@ -6,6 +6,7 @@ import 'package:shoplist_project/customwidgets/ProductItemWidget.dart';
 import 'customwidgets/ButtonWidget.dart';
 import 'package:shoplist_project/product_view.dart';
 import './participants_view.dart';
+import 'models/Product.dart';
 import 'models/UserAuth.dart';
 
 class ListProductsView extends StatefulWidget {
@@ -44,7 +45,7 @@ class _ListProductsViewState extends State<ListProductsView> {
   @override
   void initState() {
     print("Prvy build listu produktov");
-
+    widget.shoplist.fetchProducts(widget.user.token);
     super.initState();
   }
 
@@ -120,6 +121,12 @@ class _ListProductsViewState extends State<ListProductsView> {
     List notboughtProducts = [];
 
     Widget buildProductListUI() {
+      widget.shoplist.products.forEach((product) {
+        if (product.bought)
+          boughtProducts.add(widget.product);
+        else
+          notboughtProducts.add(widget.product);
+      });
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

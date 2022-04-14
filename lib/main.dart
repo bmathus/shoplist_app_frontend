@@ -24,6 +24,7 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       loading = false;
       if (homeView) {
+        // Tieto statementy literally neurobia vobec nič :D
         homeView = true;
       } else {
         homeView = false;

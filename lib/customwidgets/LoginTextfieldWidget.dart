@@ -19,7 +19,6 @@ class TextFieldWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("buldujem texhfield widget");
     return TextField(
       controller: controller,
       onChanged: onCh,

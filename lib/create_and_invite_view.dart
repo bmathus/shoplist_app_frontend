@@ -41,6 +41,32 @@ class _CreateAndInviteViewState extends State<CreateAndInviteView> {
     }
   }
 
+  void addUserToList() async {
+    if (controller.text.isEmpty) {
+      setState(() {
+        nameError = true;
+      });
+      return;
+    }
+    setState(() {
+      nameError = false;
+    });
+    try {
+      await widget.lists.joinList(controller.text);
+      Navigator.of(context).pop();
+      widget.rebuildHomeView();
+    } on Exception catch (e) {
+      if (e.toString() == "Exception: No connection") {
+        widget.lists.showErrorDialog("No connection", context);
+      } else if (e.toString() == "Exception: List does not exist") {
+        widget.lists
+            .showErrorDialog("List with given code does not exist", context);
+      } else if (e.toString() == "Exception: You are already in this list") {
+        widget.lists.showErrorDialog("You are already in this list", context);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,8 +83,9 @@ class _CreateAndInviteViewState extends State<CreateAndInviteView> {
       body: Column(
         children: [
           TextFieldWidget(
-            errorText:
-                widget.create ? (nameError ? "Name is required" : null) : null,
+            errorText: nameError
+                ? (widget.create ? "Name is required" : "Code is required")
+                : null,
             controller: controller,
             title: widget.create
                 ? "Enter shopping list name"
@@ -70,7 +97,8 @@ class _CreateAndInviteViewState extends State<CreateAndInviteView> {
             right: 10,
           ),
           ElevatedButton(
-            onPressed: widget.create ? () => createShopList() : () {},
+            onPressed:
+                widget.create ? () => createShopList() : () => addUserToList(),
             child: widget.create ? Text("Create") : Text("Join"),
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Color(0xFF355C7D)),
