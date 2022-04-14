@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shoplist_project/home_view.dart';
+import 'package:shoplist_project/models/ShopLists.dart';
 import 'customwidgets/LoginTextfieldWidget.dart';
 import 'customwidgets/LoginButtonWidget.dart';
 import 'package:shoplist_project/models/UserAuth.dart';
@@ -46,7 +47,10 @@ class _LoginViewState extends State<LoginView> {
   void gotoHomeView() {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (ctx) => HomeView(user: widget.user),
+        builder: (ctx) => HomeView(
+          user: widget.user,
+          lists: ShopLists(token: widget.user.token),
+        ),
       ),
     );
   }

@@ -6,34 +6,33 @@ import 'customwidgets/TextFieldWidget.dart';
 class CreateAndInviteView extends StatefulWidget {
   final bool create;
   final ShopLists lists;
-  final Function rebuildHomeView;
 
-  CreateAndInviteView(
-      {required this.create,
-      required this.lists,
-      required this.rebuildHomeView});
+  CreateAndInviteView({
+    required this.create,
+    required this.lists,
+  });
   @override
   State<CreateAndInviteView> createState() => _CreateAndInviteViewState();
 }
 
 class _CreateAndInviteViewState extends State<CreateAndInviteView> {
   TextEditingController controller = TextEditingController();
-  bool nameError = false;
+  bool nameorcodeError = false;
+  String inviteCodeErrorText = "";
 
   void createShopList() async {
     if (controller.text.isEmpty) {
       setState(() {
-        nameError = true;
+        nameorcodeError = true;
       });
       return;
     }
     setState(() {
-      nameError = false;
+      nameorcodeError = false;
     });
     try {
       await widget.lists.postNewList(controller.text);
       Navigator.of(context).pop();
-      widget.rebuildHomeView();
     } on Exception catch (e) {
       if (e.toString() == "Exception: No connection") {
         widget.lists.showErrorDialog("No connection", context);
@@ -44,25 +43,32 @@ class _CreateAndInviteViewState extends State<CreateAndInviteView> {
   void addUserToList() async {
     if (controller.text.isEmpty) {
       setState(() {
-        nameError = true;
+        nameorcodeError = true;
       });
       return;
     }
     setState(() {
-      nameError = false;
+      nameorcodeError = false;
+      inviteCodeErrorText = "";
     });
     try {
       await widget.lists.joinList(controller.text);
       Navigator.of(context).pop();
-      widget.rebuildHomeView();
     } on Exception catch (e) {
       if (e.toString() == "Exception: No connection") {
         widget.lists.showErrorDialog("No connection", context);
       } else if (e.toString() == "Exception: List does not exist") {
-        widget.lists
-            .showErrorDialog("List with given code does not exist", context);
+        setState(() {
+          inviteCodeErrorText = "List does not exist";
+        });
       } else if (e.toString() == "Exception: You are already in this list") {
-        widget.lists.showErrorDialog("You are already in this list", context);
+        setState(() {
+          inviteCodeErrorText = "You are already in this list";
+        });
+      } else if (e.toString() == "Exception: Invalid code") {
+        setState(() {
+          inviteCodeErrorText = "Invalid code";
+        });
       }
     }
   }
@@ -83,9 +89,13 @@ class _CreateAndInviteViewState extends State<CreateAndInviteView> {
       body: Column(
         children: [
           TextFieldWidget(
-            errorText: nameError
-                ? (widget.create ? "Name is required" : "Code is required")
-                : null,
+            errorText: nameorcodeError
+                ? (widget.create
+                    ? "Name is required"
+                    : "Invite-code is required")
+                : inviteCodeErrorText.isNotEmpty
+                    ? inviteCodeErrorText
+                    : null,
             controller: controller,
             title: widget.create
                 ? "Enter shopping list name"

@@ -10,9 +10,15 @@ import 'models/Product.dart';
 import 'models/UserAuth.dart';
 
 class ListProductsView extends StatefulWidget {
+  final ShopLists lists;
   final ShopList shoplist;
   final AuthUser user;
-  const ListProductsView({required this.shoplist, required this.user});
+
+  const ListProductsView({
+    required this.shoplist,
+    required this.user,
+    required this.lists,
+  });
 
   @override
   State<ListProductsView> createState() => _ListProductsViewState();
@@ -20,6 +26,7 @@ class ListProductsView extends StatefulWidget {
 
 class _ListProductsViewState extends State<ListProductsView> {
   int selectedIndexNavBar = 0;
+  bool productLoading = false;
 
   void gotoProductView(BuildContext ctx, bool edit) {
     Navigator.of(ctx)
@@ -38,20 +45,47 @@ class _ListProductsViewState extends State<ListProductsView> {
 
   void reBuild() => setState(() => {});
 
-  Future<void> refresh() {
-    return Future.delayed(Duration(seconds: 0));
+  Future<void> refreshProducts() async {
+    try {
+      await widget.shoplist.fetchProducts();
+      setState(() {});
+    } catch (e) {}
+  }
+
+  void loadProductsANDParticipants() async {
+    setState(() {
+      productLoading = true;
+    });
+    try {
+      await widget.shoplist.fetchProducts();
+      await widget.shoplist.fetchParticipants();
+    } on Exception catch (e) {
+      if (e.toString() == "Exception: No connection") {
+        widget.user.showErrorDialog("No connection", context);
+      } else {
+        widget.user.showErrorDialog("Something went wrong", context);
+      }
+    }
+    setState(() {
+      productLoading = false;
+    });
+  }
+
+  Future<void> refreshParticipants() async {
+    try {
+      await widget.shoplist.fetchParticipants();
+      setState(() {});
+    } catch (e) {}
   }
 
   @override
   void initState() {
-    print("Prvy build listu produktov");
-    widget.shoplist.fetchProducts(widget.user.token);
+    loadProductsANDParticipants();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    print("Buildujem list produktov");
     final mediaQuery = MediaQuery.of(context);
 
     AppBar appBar = AppBar(
@@ -121,49 +155,52 @@ class _ListProductsViewState extends State<ListProductsView> {
     List notboughtProducts = [];
 
     Widget buildProductListUI() {
-      widget.shoplist.products.forEach((product) {
-        if (product.bought)
-          boughtProducts.add(widget.product);
-        else
-          notboughtProducts.add(widget.product);
-      });
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Align(child: deleteButton, alignment: Alignment.centerRight),
           Expanded(
-            child: RefreshIndicator(
-              onRefresh: refresh,
-              child: (boughtProducts.isNotEmpty || notboughtProducts.isNotEmpty)
-                  ? ListView(children: [
-                      ...notboughtProducts,
-                      boughtProducts.isNotEmpty
-                          ? const Padding(
-                              padding: EdgeInsets.only(top: 8, bottom: 5),
-                              child: DeviderWidget("Bought products"),
-                            )
-                          : const SizedBox(),
-                      ...boughtProducts,
-                    ])
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          "assets/list-is-empty.png",
-                          color: Color.fromARGB(83, 89, 89, 89),
-                        ),
-                        SizedBox(height: 10),
-                        const Text(
-                          "No products",
-                          style: TextStyle(
-                            color: Color.fromARGB(111, 89, 89, 89),
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
+            child: productLoading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : RefreshIndicator(
+                    onRefresh: refreshProducts,
+                    child: (boughtProducts.isNotEmpty ||
+                            notboughtProducts.isNotEmpty)
+                        ? ListView(children: [
+                            ...notboughtProducts,
+                            boughtProducts.isNotEmpty
+                                ? const Padding(
+                                    padding: EdgeInsets.only(top: 8, bottom: 5),
+                                    child: DeviderWidget("Bought products"),
+                                  )
+                                : const SizedBox(),
+                            ...boughtProducts,
+                          ])
+                        : SingleChildScrollView(
+                            physics: AlwaysScrollableScrollPhysics(),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/list-is-empty.png",
+                                  fit: BoxFit.cover,
+                                  color: Color.fromARGB(83, 89, 89, 89),
+                                ),
+                                SizedBox(height: 10),
+                                const Text(
+                                  "No products",
+                                  style: TextStyle(
+                                    color: Color.fromARGB(111, 89, 89, 89),
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
-                        )
-                      ],
-                    ),
-            ),
+                  ),
           ),
           SizedBox(height: 8),
           ButtonWidget("Add product", () => gotoProductView(context, false)),
@@ -173,7 +210,6 @@ class _ListProductsViewState extends State<ListProductsView> {
     }
 
     Widget makeProductWidgets() {
-      print("buildujem produkty");
       Widget divider = const Divider(
         color: Color.fromARGB(66, 255, 255, 255),
         thickness: 1,
@@ -203,9 +239,13 @@ class _ListProductsViewState extends State<ListProductsView> {
       body: SafeArea(
         child: selectedIndexNavBar == 0
             ? makeProductWidgets()
-            : ParticipantsView(
-                participants: widget.shoplist.users,
-                invite_code: widget.shoplist.invite_code),
+            : RefreshIndicator(
+                onRefresh: refreshParticipants,
+                child: ParticipantsView(
+                    user: widget.user,
+                    participants: widget.shoplist.participants,
+                    invite_code: widget.shoplist.invite_code),
+              ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Color.fromARGB(255, 0, 158, 142),

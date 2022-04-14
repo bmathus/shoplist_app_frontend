@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shoplist_project/models/ShopLists.dart';
 import 'login_view.dart';
 import './home_view.dart';
 import 'models/UserAuth.dart';
@@ -45,7 +46,10 @@ class _MyAppState extends State<MyApp> {
       home: loading
           ? Scaffold()
           : homeView
-              ? HomeView(user: user)
+              ? HomeView(
+                  user: user,
+                  lists: ShopLists(token: user.token),
+                )
               : LoginView(user: user),
     );
   }

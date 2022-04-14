@@ -9,9 +9,9 @@ import 'models/UserAuth.dart';
 
 class HomeView extends StatefulWidget {
   final AuthUser user;
-  late ShopLists lists;
+  final ShopLists lists;
 
-  HomeView({required this.user});
+  HomeView({required this.user, required this.lists});
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -20,21 +20,17 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   bool listsLoading = false;
 
-  AppBar appBar = AppBar(
-    title: const Text('Home'),
-    centerTitle: true,
-  );
-
   void gotoCreateAndInviteView(BuildContext ctx, bool create) {
-    Navigator.of(ctx).push(
-      MaterialPageRoute(
-        builder: (ctx) => CreateAndInviteView(
-          create: create,
-          lists: widget.lists,
-          rebuildHomeView: () => setState(() {}),
-        ),
-      ),
-    );
+    Navigator.of(ctx)
+        .push(
+          MaterialPageRoute(
+            builder: (ctx) => CreateAndInviteView(
+              create: create,
+              lists: widget.lists,
+            ),
+          ),
+        )
+        .then((value) => setState(() {}));
   }
 
   Future<void> refresh() async {
@@ -45,7 +41,6 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void loadLists() async {
-    widget.lists = ShopLists(token: widget.user.token);
     setState(() {
       listsLoading = true;
     });
@@ -71,7 +66,13 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    print('builduje home view');
     final mediaQuery = MediaQuery.of(context);
+
+    AppBar appBar = AppBar(
+      title: const Text('Home'),
+      centerTitle: true,
+    );
 
     List privateLists = [];
     List sharedLists = [];
@@ -79,9 +80,19 @@ class _HomeViewState extends State<HomeView> {
     List<Widget> getHomeUI() {
       widget.lists.allLists.forEach((list) {
         if (list.num_ppl == 1) {
-          privateLists.add(ShopListWidget(shoplist: list, user: widget.user));
+          privateLists.add(ShopListWidget(
+            shoplist: list,
+            user: widget.user,
+            lists: widget.lists,
+            rebuildHomeView: () => setState(() {}),
+          ));
         } else {
-          sharedLists.add(ShopListWidget(shoplist: list, user: widget.user));
+          sharedLists.add(ShopListWidget(
+            shoplist: list,
+            user: widget.user,
+            lists: widget.lists,
+            rebuildHomeView: () => setState(() {}),
+          ));
         }
       });
 

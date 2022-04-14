@@ -13,20 +13,21 @@ class ShopList {
   final int num_ppl;
   final int num_items;
   final String invite_code;
-  List<Participant> users;
+  List<Participant> participants;
   List<Product> products;
+  final String token;
 
-  ShopList({
-    required this.id,
-    required this.name,
-    required this.num_ppl,
-    required this.num_items,
-    required this.invite_code,
-    required this.users,
-    required this.products,
-  });
+  ShopList(
+      {required this.id,
+      required this.name,
+      required this.num_ppl,
+      required this.num_items,
+      required this.invite_code,
+      required this.participants,
+      required this.products,
+      required this.token});
 
-  Future<void> fetchProducts(String token) async {
+  Future<void> fetchProducts() async {
     try {
       final response = await http.get(
         Uri.parse('http://10.0.2.2:8000/list/$id'),
@@ -54,6 +55,33 @@ class ShopList {
       throw Exception("No connection");
     }
   }
+
+  Future<void> fetchParticipants() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:8000/list/$id/participants'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Token $token",
+        },
+      );
+      if (response.statusCode == 200) {
+        List<Participant> listParticipants = [];
+        var bodyMap = jsonDecode(response.body);
+        bodyMap['users'].forEach((participant) {
+          listParticipants.add(Participant(
+            id: participant['id'],
+            name: participant['name'],
+            email: participant['email'],
+          ));
+        });
+        participants = listParticipants;
+        print(participants);
+      }
+    } on SocketException {
+      throw Exception("No connection");
+    }
+  }
 }
 
 class ShopLists {
@@ -75,14 +103,14 @@ class ShopLists {
         var bodyMap = jsonDecode(responce.body);
         bodyMap['lists'].forEach((list) {
           allFetchedLists.add(ShopList(
-            id: list['id'],
-            name: list['name'],
-            num_ppl: list['num_ppl'],
-            num_items: list['num_items'],
-            invite_code: list['invite_code'],
-            users: [],
-            products: [],
-          ));
+              id: list['id'],
+              name: list['name'],
+              num_ppl: list['num_ppl'],
+              num_items: list['num_items'],
+              invite_code: list['invite_code'],
+              participants: [],
+              products: [],
+              token: token));
         });
         allLists = allFetchedLists;
       }
@@ -106,21 +134,21 @@ class ShopLists {
       if (responce.statusCode == 200) {
         var bodyMap = jsonDecode(responce.body);
         allLists.add(ShopList(
-          id: bodyMap['id'],
-          name: bodyMap['name'],
-          num_ppl: bodyMap['num_ppl'],
-          num_items: bodyMap['num_items'],
-          invite_code: bodyMap['invite_code'],
-          users: [],
-          products: [],
-        ));
+            id: bodyMap['id'],
+            name: bodyMap['name'],
+            num_ppl: bodyMap['num_ppl'],
+            num_items: bodyMap['num_items'],
+            invite_code: bodyMap['invite_code'],
+            participants: [],
+            products: [],
+            token: token));
       }
     } on SocketException {
       throw Exception("No connection");
     }
   }
 
-  Future<void> joinList(String code) async {
+  Future<void> joinList(String invite_code) async {
     try {
       final response = await http.post(
         Uri.parse('http://10.0.2.2:8000/list/invite'),
@@ -129,7 +157,7 @@ class ShopLists {
           "Authorization": "Token $token",
         },
         body: jsonEncode({
-          "invite_code": code,
+          "invite_code": invite_code,
         }),
       );
       if (response.statusCode == 200) {
@@ -140,16 +168,18 @@ class ShopLists {
             num_ppl: bodyMap["num_ppl"],
             num_items: bodyMap["num_items"],
             invite_code: bodyMap["invite_code"],
-            users: [],
-            products: []));
+            participants: [],
+            products: [],
+            token: token));
       } else if (response.statusCode == 404) {
         throw Exception("List does not exist");
       } else if (response.statusCode == 400) {
         var body = jsonDecode(response.body);
         if (body["detail"] == "You are already in this list.") {
           throw Exception("You are already in this list");
-        } else
+        } else {
           throw Exception("Invalid code");
+        }
       }
     } on SocketException {
       throw Exception("No connection");

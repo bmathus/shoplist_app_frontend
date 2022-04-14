@@ -6,15 +6,17 @@ import 'customwidgets/DeviderWidget.dart';
 import 'package:flutter/services.dart';
 
 class ParticipantsView extends StatelessWidget {
-  List<Participant> participants;
-  String invite_code;
+  final AuthUser user;
+  final List<Participant> participants;
+  final String invite_code;
 
   ParticipantsView({
+    required this.user,
     required this.participants,
     required this.invite_code,
   });
 
-  Widget getParticipantWidget(String name) {
+  Widget getParticipantWidget(String name, String email, bool me) {
     return Container(
       decoration: const BoxDecoration(
         color: Color.fromARGB(255, 43, 43, 43),
@@ -23,40 +25,53 @@ class ParticipantsView extends StatelessWidget {
         ),
       ),
       child: ListTile(
-        onTap: () {},
         contentPadding: EdgeInsets.zero,
+        subtitle: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Text(email),
+        ),
         title: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Text(name),
         ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const VerticalDivider(
-              indent: 5,
-              endIndent: 5,
-              color: Color.fromARGB(66, 255, 255, 255),
-              thickness: 1,
-              width: 0,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: IconButton(
-                icon: const Icon(Icons.phone),
-                onPressed: () {},
+        trailing: me
+            ? null
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const VerticalDivider(
+                    indent: 0,
+                    endIndent: 0,
+                    color: Color.fromARGB(66, 255, 255, 255),
+                    thickness: 1,
+                    width: 0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    child: IconButton(
+                      icon: const Icon(Icons.phone, size: 28),
+                      onPressed: () {},
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
 
   List<Widget> getParticpantsListUI() {
+    Widget owner = SizedBox();
     List<Widget> participList = participants.map((participant) {
-      return getParticipantWidget(participant.name);
+      if (participant.id == user.id) {
+        owner = getParticipantWidget(
+            "${participant.name} (You)", participant.email, true);
+        return SizedBox();
+      } else {
+        return getParticipantWidget(participant.name, participant.email, false);
+      }
     }).toList();
 
+    participList.insert(0, owner);
     participList.insert(0, const DeviderWidget("Participants"));
     participList.insert(0, const SizedBox(height: 10));
 
@@ -66,10 +81,6 @@ class ParticipantsView extends StatelessWidget {
       height: 0,
     ));
     return participList;
-  }
-
-  Future<void> refresh() {
-    return Future.delayed(const Duration(seconds: 0));
   }
 
   @override

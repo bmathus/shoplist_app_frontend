@@ -4,19 +4,31 @@ import 'package:shoplist_project/list_products_view.dart';
 import 'package:shoplist_project/models/UserAuth.dart';
 
 class ShopListWidget extends StatelessWidget {
+  final ShopLists lists;
   final ShopList shoplist;
   final AuthUser user;
+  final Function rebuildHomeView;
 
-  ShopListWidget({required this.shoplist, required this.user});
+  ShopListWidget(
+      {required this.shoplist,
+      required this.user,
+      required this.lists,
+      required this.rebuildHomeView});
 
   void gotoListProductsView(BuildContext ctx) {
-    Navigator.of(ctx).push(
+    Navigator.of(ctx)
+        .push(
       MaterialPageRoute(
-          builder: (ctx) => ListProductsView(
-                user: user,
-                shoplist: shoplist,
-              )),
-    );
+        builder: (ctx) => ListProductsView(
+          user: user,
+          shoplist: shoplist,
+          lists: lists,
+        ),
+      ),
+    )
+        .then((value) {
+      rebuildHomeView();
+    });
   }
 
   @override
