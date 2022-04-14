@@ -59,60 +59,63 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(30.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-                height: (mediaQuery.size.height - mediaQuery.padding.top) * 0.3,
-                child: Image.asset(
-                  "applogo.png",
-                )),
-            const SizedBox(
-              height: 50,
+        resizeToAvoidBottomInset: true,
+        body: Padding(
+          padding: EdgeInsets.all(30.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                    height:
+                        (mediaQuery.size.height - mediaQuery.padding.top) * 0.3,
+                    child: Image.asset(
+                      "applogo.png",
+                    )),
+                const SizedBox(
+                  height: 50,
+                ),
+                TextFieldWidget(
+                  controller: emailController,
+                  hintText: 'Email',
+                  hideText: false,
+                  leftIcon: Icons.mail_outline,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFieldWidget(
+                  controller: passwordController,
+                  hintText: 'Password',
+                  hideText: true,
+                  leftIcon: Icons.lock_outline,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                validationError
+                    ? const SizedBox(
+                        width: double.infinity,
+                        child: Text(
+                          "Incorrect email or password",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      )
+                    : const SizedBox(),
+                const SizedBox(
+                  height: 10,
+                ),
+                validatingLogin
+                    ? CircularProgressIndicator()
+                    : ButtonWidget(
+                        title: 'Login',
+                        hasBorder: false,
+                        onTap: () => loginPressed(context),
+                      ),
+              ],
             ),
-            TextFieldWidget(
-              controller: emailController,
-              hintText: 'Email',
-              hideText: false,
-              leftIcon: Icons.mail_outline,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            TextFieldWidget(
-              controller: passwordController,
-              hintText: 'Password',
-              hideText: true,
-              leftIcon: Icons.lock_outline,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            validationError
-                ? const SizedBox(
-                    width: double.infinity,
-                    child: Text(
-                      "Incorrect email or password",
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  )
-                : const SizedBox(),
-            const SizedBox(
-              height: 10,
-            ),
-            validatingLogin
-                ? CircularProgressIndicator()
-                : ButtonWidget(
-                    title: 'Login',
-                    hasBorder: false,
-                    onTap: () => loginPressed(context),
-                  ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 }

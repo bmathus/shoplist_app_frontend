@@ -96,6 +96,34 @@ class _HomeViewState extends State<HomeView> {
         }
       });
 
+      if (privateLists.isEmpty && sharedLists.isEmpty) {
+        return [
+          UserInfoWidget(user: widget.user),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 30),
+              Image.asset(
+                "assets/list-is-empty.png",
+                fit: BoxFit.cover,
+                color: Color.fromARGB(83, 89, 89, 89),
+              ),
+              SizedBox(height: 10),
+              Center(
+                  child: Text(
+                "You are not a member of\n any lists yet",
+                style: TextStyle(
+                  color: Color.fromARGB(111, 89, 89, 89),
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ))
+            ],
+          )
+        ];
+      }
+
       return [
         UserInfoWidget(user: widget.user),
         privateLists.isNotEmpty

@@ -107,11 +107,14 @@ class _ListProductsViewState extends State<ListProductsView> {
         );
 
     AlertDialog alert = AlertDialog(
-      title: Text('Delete ${widget.shoplist.name}?'),
-      content: Text('Are you sure you want to delete ${widget.shoplist.name}?'),
+      title: Text((widget.shoplist.num_ppl == 1 ? "Delete" : "Leave") +
+          ' ${widget.shoplist.name}?'),
+      content: Text('Are you sure you want to ' +
+          (widget.shoplist.num_ppl == 1 ? "delete" : "leave") +
+          ' ${widget.shoplist.name}?'),
       actions: <Widget>[
         ElevatedButton(
-          child: Text("Delete"),
+          child: Text(widget.shoplist.num_ppl == 1 ? "Delete" : "Leave"),
           style: buttonstyle(Color.fromARGB(255, 104, 59, 64)),
           onPressed: () {
             Navigator.pop(context, 'Delete');
@@ -138,7 +141,7 @@ class _ListProductsViewState extends State<ListProductsView> {
               return alert;
             }),
         icon: Icon(Icons.close_rounded),
-        label: Text("Delete"),
+        label: Text(widget.shoplist.num_ppl == 1 ? "Delete" : "Leave"),
         style: ButtonStyle(
           backgroundColor:
               MaterialStateProperty.all(Color.fromARGB(255, 104, 59, 64)),
