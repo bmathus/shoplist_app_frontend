@@ -10,8 +10,8 @@ import 'UserAuth.dart';
 class ShopList {
   final int id;
   final String name;
-  final int num_ppl;
-  final int num_items;
+  int num_ppl;
+  int num_items;
   final String invite_code;
   List<Participant> participants;
   List<Product> products;
@@ -52,6 +52,24 @@ class ShopList {
           ));
         });
         products = listProducts;
+      }
+    } on SocketException {
+      throw Exception("No connection");
+    }
+  }
+
+  Future<void> delProduct(Product prod) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('http://10.0.2.2:8000/list/$id/product/${prod.id}'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Token $token",
+        },
+      );
+      if (response.statusCode == 200) {
+        products.remove(prod);
+        num_items--;
       }
     } on SocketException {
       throw Exception("No connection");

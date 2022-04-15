@@ -8,6 +8,7 @@ import 'package:shoplist_project/models/ShopLists.dart';
 class ProductView extends StatefulWidget {
   final bool edit;
   final ShopList shoplist;
+  final ShopLists lists;
   final Product? product;
   final AuthUser user;
 
@@ -16,6 +17,7 @@ class ProductView extends StatefulWidget {
     this.edit,
     this.product,
     this.user,
+    this.lists,
   );
 
   @override
@@ -62,6 +64,8 @@ class _ProductViewState extends State<ProductView> {
         widget.product!.quantity = quantityController.text == ""
             ? null
             : double.parse(quantityController.text);
+        widget.product!.picture_base64 = "SomeFakeValuePlaceholder";
+        widget.product!.editProduct(widget.shoplist, widget.lists, context);
       } else {
         Product newp = Product(
           id: 0,
@@ -71,11 +75,13 @@ class _ProductViewState extends State<ProductView> {
               : double.parse(quantityController.text),
           unit: unitController.text == "" ? null : unitController.text,
           bought: false,
-          picture_base64: "fdsagfa",
+          picture_base64:
+              "fdsagfa", // Pridať upload obrázku a base64-encoding nejako!
           list: widget.shoplist,
           token: widget.user.token,
         );
         newp.addProduct(widget.shoplist);
+        widget.shoplist.num_items++;
         widget.shoplist.products.add(
           newp,
         );

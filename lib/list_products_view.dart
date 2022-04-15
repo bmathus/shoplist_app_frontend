@@ -32,8 +32,8 @@ class _ListProductsViewState extends State<ListProductsView> {
     Navigator.of(ctx)
         .push(
           MaterialPageRoute(
-              builder: (ctx) =>
-                  ProductView(widget.shoplist, edit, null, widget.user)),
+              builder: (ctx) => ProductView(
+                  widget.shoplist, edit, null, widget.user, widget.lists)),
         )
         .then((_) => setState(() {}));
   }
@@ -85,6 +85,11 @@ class _ListProductsViewState extends State<ListProductsView> {
     super.initState();
   }
 
+  void leaveWait(ShopLists lists, ShopList shoplist, context) async {
+    await widget.lists.leaveList(widget.shoplist);
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -119,7 +124,7 @@ class _ListProductsViewState extends State<ListProductsView> {
           style: buttonstyle(Color.fromARGB(255, 104, 59, 64)),
           onPressed: () {
             Navigator.pop(context, 'Delete');
-            widget.lists.leaveList(widget.shoplist);
+            leaveWait(widget.lists, widget.shoplist, context);
           },
         ),
         ElevatedButton(
@@ -223,10 +228,10 @@ class _ListProductsViewState extends State<ListProductsView> {
       widget.shoplist.products.forEach((product) {
         if (product.bought) {
           boughtProducts.add(ProductItemWidget(
-              widget.shoplist, product, reBuild, widget.user));
+              widget.shoplist, product, reBuild, widget.user, widget.lists));
         } else {
           notboughtProducts.add(ProductItemWidget(
-              widget.shoplist, product, reBuild, widget.user));
+              widget.shoplist, product, reBuild, widget.user, widget.lists));
         }
       });
 

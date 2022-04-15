@@ -8,10 +8,12 @@ import 'package:shoplist_project/models/dummyLists.dart';
 class ProductItemWidget extends StatefulWidget {
   final Product product;
   final ShopList shoplist;
+  final ShopLists lists;
   final Function reBuild;
   final AuthUser user;
 
-  ProductItemWidget(this.shoplist, this.product, this.reBuild, this.user);
+  ProductItemWidget(
+      this.shoplist, this.product, this.reBuild, this.user, this.lists);
 
   @override
   State<ProductItemWidget> createState() => _ProductItemWidgetState();
@@ -22,8 +24,8 @@ class _ProductItemWidgetState extends State<ProductItemWidget> {
     Navigator.of(ctx)
         .push(
           MaterialPageRoute(
-              builder: (ctx) => ProductView(
-                  widget.shoplist, edit, widget.product, widget.user)),
+              builder: (ctx) => ProductView(widget.shoplist, edit,
+                  widget.product, widget.user, widget.lists)),
         )
         .then((value) => setState(() {}));
   }
@@ -34,6 +36,17 @@ class _ProductItemWidgetState extends State<ProductItemWidget> {
     } else {
       return n.toStringAsFixed(n.truncateToDouble() == n ? 0 : 1);
     }
+  }
+
+  void delWait() async {
+    await widget.shoplist.delProduct(widget.product);
+    widget.shoplist.products.remove(widget.product);
+    widget.reBuild();
+  }
+
+  void editWait() async {
+    await widget.product.editProduct(widget.shoplist, widget.lists, context);
+    widget.reBuild();
   }
 
   @override
@@ -55,7 +68,7 @@ class _ProductItemWidgetState extends State<ProductItemWidget> {
           value: widget.product.bought,
           onChanged: (value) {
             widget.product.bought = value!;
-            widget.reBuild();
+            editWait();
           },
         ),
         trailing: Row(
@@ -80,8 +93,7 @@ class _ProductItemWidgetState extends State<ProductItemWidget> {
               child: IconButton(
                 icon: Icon(Icons.delete_rounded),
                 onPressed: () {
-                  widget.shoplist.products.remove(widget.product);
-                  widget.reBuild();
+                  delWait();
                 },
               ),
             ),

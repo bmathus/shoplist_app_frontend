@@ -41,7 +41,38 @@ class Product {
         }),
       );
       if (response.statusCode == 200) {
-        // Return to shoplist screen
+        var bodyMap = jsonDecode(response.body);
+        id = bodyMap["id"];
+        picture_base64 = bodyMap["picture_base64"];
+      }
+    } on SocketException {
+      throw Exception("No connection");
+    }
+  }
+
+  Future<void> editProduct(ShopList lst, ShopLists lists, context) async {
+    try {
+      final response = await http.put(
+        Uri.parse('http://10.0.2.2:8000/list/${lst.id}/product/$id'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Token $token",
+        },
+        body: jsonEncode({
+          "name": name,
+          "quantity": quantity,
+          "unit": unit,
+          "bought": bought,
+          "picture_base64": picture_base64,
+        }),
+      );
+      if (response.statusCode == 200) {
+        // OK
+      } else if (response.statusCode == 404) {
+        // Potrebujeme odchytiť
+        lists.showErrorDialog(
+            "The product no longer exists. It might have been deleted by another user",
+            context);
       }
     } on SocketException {
       throw Exception("No connection");
