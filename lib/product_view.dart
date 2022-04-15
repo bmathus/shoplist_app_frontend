@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shoplist_project/models/UserAuth.dart';
 import './models/Product.dart';
 import 'package:shoplist_project/customwidgets/TextFieldWidget.dart';
 import 'package:shoplist_project/customwidgets/ButtonWidget.dart';
@@ -8,11 +9,13 @@ class ProductView extends StatefulWidget {
   final bool edit;
   final ShopList shoplist;
   final Product? product;
+  final AuthUser user;
 
   ProductView(
     this.shoplist,
     this.edit,
     this.product,
+    this.user,
   );
 
   @override
@@ -60,17 +63,21 @@ class _ProductViewState extends State<ProductView> {
             ? null
             : double.parse(quantityController.text);
       } else {
+        Product newp = Product(
+          id: 0,
+          name: nameController.text,
+          quantity: quantityController.text == ""
+              ? null
+              : double.parse(quantityController.text),
+          unit: unitController.text == "" ? null : unitController.text,
+          bought: false,
+          picture_base64: "fdsagfa",
+          list: widget.shoplist,
+          token: widget.user.token,
+        );
+        newp.addProduct(widget.shoplist);
         widget.shoplist.products.add(
-          Product(
-            id: 0,
-            name: nameController.text,
-            quantity: quantityController.text == ""
-                ? null
-                : double.parse(quantityController.text),
-            unit: unitController.text == "" ? null : unitController.text,
-            bought: false,
-            picture_base64: "fdsagfa",
-          ),
+          newp,
         );
       }
 

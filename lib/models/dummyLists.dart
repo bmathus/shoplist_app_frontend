@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:shoplist_project/models/Participant.dart';
 import 'Product.dart';
 import 'ShopLists.dart';
@@ -81,4 +81,4 @@ List<Product> dProducts2 = [
       bought: false,
       id: 3,
       name: "Exclusive"),
-];
+];*/

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shoplist_project/models/Product.dart';
 import 'package:shoplist_project/models/ShopLists.dart';
+import 'package:shoplist_project/models/UserAuth.dart';
 import 'package:shoplist_project/product_view.dart';
 import 'package:shoplist_project/models/dummyLists.dart';
 
@@ -8,8 +9,9 @@ class ProductItemWidget extends StatefulWidget {
   final Product product;
   final ShopList shoplist;
   final Function reBuild;
+  final AuthUser user;
 
-  ProductItemWidget(this.shoplist, this.product, this.reBuild);
+  ProductItemWidget(this.shoplist, this.product, this.reBuild, this.user);
 
   @override
   State<ProductItemWidget> createState() => _ProductItemWidgetState();
@@ -20,8 +22,8 @@ class _ProductItemWidgetState extends State<ProductItemWidget> {
     Navigator.of(ctx)
         .push(
           MaterialPageRoute(
-              builder: (ctx) =>
-                  ProductView(widget.shoplist, edit, widget.product)),
+              builder: (ctx) => ProductView(
+                  widget.shoplist, edit, widget.product, widget.user)),
         )
         .then((value) => setState(() {}));
   }

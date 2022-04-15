@@ -47,6 +47,8 @@ class ShopList {
             unit: product['unit'],
             bought: product['bought'],
             picture_base64: product['picture_base64'],
+            list: this,
+            token: this.token,
           ));
         });
         products = listProducts;
@@ -180,6 +182,23 @@ class ShopLists {
         } else {
           throw Exception("Invalid code");
         }
+      }
+    } on SocketException {
+      throw Exception("No connection");
+    }
+  }
+
+  Future<void> leaveList(ShopList lst) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('http://10.0.2.2:8000/list/${lst.id}'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Token $token",
+        },
+      );
+      if (response.statusCode == 200) {
+        allLists.remove(lst);
       }
     } on SocketException {
       throw Exception("No connection");
