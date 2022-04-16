@@ -1,23 +1,22 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:shoplist_project/models/UserAuth.dart';
 import './models/Product.dart';
 import 'package:shoplist_project/customwidgets/TextFieldWidget.dart';
 import 'package:shoplist_project/customwidgets/ButtonWidget.dart';
 import 'package:shoplist_project/models/ShopLists.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProductView extends StatefulWidget {
   final bool edit;
   final ShopList shoplist;
-  final ShopLists lists;
   final Product? product;
-  final AuthUser user;
 
   ProductView(
     this.shoplist,
     this.edit,
     this.product,
-    this.user,
-    this.lists,
   );
 
   @override
@@ -26,15 +25,18 @@ class ProductView extends StatefulWidget {
 
 class _ProductViewState extends State<ProductView> {
   TextEditingController nameController = TextEditingController();
-
   TextEditingController quantityController = TextEditingController();
-
   TextEditingController unitController = TextEditingController();
-
   bool validateName = false;
+  bool loading = false;
+  Uint8List? image;
 
   @override
   void initState() {
+    image = widget.product?.picture_base64 != null
+        ? base64Decode(widget.product!.picture_base64!)
+        : null;
+
     if (widget.edit) {
       nameController.text = widget.product!.name;
       quantityController.text = widget.product!.quantity == null
@@ -46,45 +48,72 @@ class _ProductViewState extends State<ProductView> {
     super.initState();
   }
 
-  void add_edit_Product() {
+  Future<void> pickImage() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) return; //ak user nevyberie image z galerie
+      final imageTemporary = File(image.path).readAsBytesSync();
+
+      //updatneme ui aby sa image zobrazil
+      setState(() {
+        this.image = imageTemporary;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void add_edit_Product() async {
     if (nameController.text.isEmpty) {
       setState(() {
         validateName = true;
       });
     } else {
-      validateName = false;
+      setState(() {
+        loading = true;
+        validateName = false;
+      });
+
       if (quantityController.text.contains(',')) {
         quantityController.text =
             quantityController.text.replaceFirst(RegExp(','), '.');
       }
-      if (widget.edit) {
-        widget.product!.name = nameController.text;
-        widget.product!.unit =
-            unitController.text == "" ? null : unitController.text;
-        widget.product!.quantity = quantityController.text == ""
-            ? null
-            : double.parse(quantityController.text);
-        widget.product!.picture_base64 = "SomeFakeValuePlaceholder";
-        widget.product!.editProduct(widget.shoplist, widget.lists, context);
-      } else {
-        Product newp = Product(
-          id: 0,
-          name: nameController.text,
-          quantity: quantityController.text == ""
-              ? null
-              : double.parse(quantityController.text),
-          unit: unitController.text == "" ? null : unitController.text,
-          bought: false,
-          picture_base64:
-              "fdsagfa", // Pridať upload obrázku a base64-encoding nejako!
-          list: widget.shoplist,
-          token: widget.user.token,
-        );
-        newp.addProduct(widget.shoplist);
-        widget.shoplist.num_items++;
-        widget.shoplist.products.add(
-          newp,
-        );
+
+      try {
+        if (widget.edit) {
+          await widget.product!.editProduct(
+            list: widget.shoplist,
+            name: nameController.text,
+            quantity: quantityController.text == ""
+                ? null
+                : double.parse(quantityController.text),
+            unit: unitController.text == "" ? null : unitController.text,
+            picture_base64: image == null ? null : base64Encode(image!),
+          );
+        } else {
+          await widget.shoplist.addProduct(
+            name: nameController.text,
+            quantity: quantityController.text == ""
+                ? null
+                : double.parse(quantityController.text),
+            unit: unitController.text == "" ? null : unitController.text,
+            picture_base64: image == null ? null : base64Encode(image!),
+          );
+        }
+        setState(() {
+          loading = false;
+        });
+      } on Exception catch (e) {
+        setState(() {
+          loading = false;
+        });
+        if (e.toString() == "Exception: No connection") {
+          widget.shoplist.showErrorDialog("No connection", context);
+          return;
+        } else if (e.toString() == "Exception: Not found") {
+          await widget.product!
+              .showErrorDialog("This product is deleted", context);
+        }
       }
 
       Navigator.of(context).pop();
@@ -122,9 +151,9 @@ class _ProductViewState extends State<ProductView> {
                               appBar.preferredSize.height -
                               mediaQuery.padding.top) *
                           0.45,
-                      child: widget.edit
-                          ? Image.asset(
-                              "assets/fruit.jpg",
+                      child: image != null
+                          ? Image.memory(
+                              image!,
                               fit: BoxFit.cover,
                             )
                           : const Center(
@@ -140,7 +169,9 @@ class _ProductViewState extends State<ProductView> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8),
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          pickImage();
+                        },
                         child: Icon(
                           Icons.photo_library_rounded,
                           size: 30,
@@ -190,8 +221,10 @@ class _ProductViewState extends State<ProductView> {
                   ],
                 ),
                 Spacer(),
-                ButtonWidget(widget.edit ? "Save" : "Add product",
-                    () => add_edit_Product()),
+                loading
+                    ? CircularProgressIndicator()
+                    : ButtonWidget(widget.edit ? "Save" : "Add product",
+                        () => add_edit_Product()),
                 SizedBox(
                   height: 10,
                 )

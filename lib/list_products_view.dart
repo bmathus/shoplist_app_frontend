@@ -33,7 +33,10 @@ class _ListProductsViewState extends State<ListProductsView> {
         .push(
           MaterialPageRoute(
               builder: (ctx) => ProductView(
-                  widget.shoplist, edit, null, widget.user, widget.lists)),
+                    widget.shoplist,
+                    edit,
+                    null,
+                  )),
         )
         .then((_) => setState(() {}));
   }
@@ -44,7 +47,7 @@ class _ListProductsViewState extends State<ListProductsView> {
     });
   }
 
-  void reBuild() => setState(() => {});
+  void reBuildThisView() => setState(() => {});
 
   Future<void> refreshProducts() async {
     try {
@@ -85,8 +88,11 @@ class _ListProductsViewState extends State<ListProductsView> {
     super.initState();
   }
 
-  void leaveWait(ShopLists lists, ShopList shoplist, context) async {
-    await widget.lists.leaveList(widget.shoplist);
+  void leaveOrDeleteList(BuildContext context) async {
+    Navigator.pop(context, 'Delete');
+    try {
+      await widget.lists.leaveList(widget.shoplist);
+    } catch (e) {}
     Navigator.pop(context);
   }
 
@@ -123,8 +129,7 @@ class _ListProductsViewState extends State<ListProductsView> {
           child: Text(widget.shoplist.num_ppl == 1 ? "Delete" : "Leave"),
           style: buttonstyle(Color.fromARGB(255, 104, 59, 64)),
           onPressed: () {
-            Navigator.pop(context, 'Delete');
-            leaveWait(widget.lists, widget.shoplist, context);
+            leaveOrDeleteList(context);
           },
         ),
         ElevatedButton(
@@ -193,6 +198,7 @@ class _ListProductsViewState extends State<ListProductsView> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                SizedBox(height: 30),
                                 Image.asset(
                                   "assets/list-is-empty.png",
                                   fit: BoxFit.cover,
@@ -227,11 +233,11 @@ class _ListProductsViewState extends State<ListProductsView> {
       );
       widget.shoplist.products.forEach((product) {
         if (product.bought) {
-          boughtProducts.add(ProductItemWidget(
-              widget.shoplist, product, reBuild, widget.user, widget.lists));
+          boughtProducts.add(
+              ProductItemWidget(widget.shoplist, product, reBuildThisView));
         } else {
-          notboughtProducts.add(ProductItemWidget(
-              widget.shoplist, product, reBuild, widget.user, widget.lists));
+          notboughtProducts.add(
+              ProductItemWidget(widget.shoplist, product, reBuildThisView));
         }
       });
 

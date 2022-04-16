@@ -27,6 +27,43 @@ class ShopList {
       required this.products,
       required this.token});
 
+  Future<void> addProduct({
+    required String name,
+    required double? quantity,
+    required String? unit,
+    required String? picture_base64,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:8000/list/${id}/product'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Token $token",
+        },
+        body: jsonEncode({
+          "name": name,
+          "unit": unit,
+          "quantity": quantity,
+          "picture_base64": picture_base64,
+        }),
+      );
+      if (response.statusCode == 200) {
+        var bodyMap = jsonDecode(response.body);
+        num_items++;
+        products.add(Product(
+            picture_base64: bodyMap["picture_base64"],
+            quantity: bodyMap["quantity"],
+            unit: bodyMap["unit"],
+            bought: bodyMap["bought"],
+            id: bodyMap["id"],
+            name: bodyMap["name"],
+            token: token));
+      }
+    } on SocketException {
+      throw Exception("No connection");
+    }
+  }
+
   Future<void> fetchProducts() async {
     try {
       final response = await http.get(
@@ -47,10 +84,10 @@ class ShopList {
             unit: product['unit'],
             bought: product['bought'],
             picture_base64: product['picture_base64'],
-            list: this,
-            token: this.token,
+            token: token,
           ));
         });
+        num_items = listProducts.length;
         products = listProducts;
       }
     } on SocketException {
@@ -58,19 +95,16 @@ class ShopList {
     }
   }
 
-  Future<void> delProduct(Product prod) async {
+  Future<void> deleteProduct(Product product) async {
     try {
       final response = await http.delete(
-        Uri.parse('http://10.0.2.2:8000/list/$id/product/${prod.id}'),
+        Uri.parse('http://10.0.2.2:8000/list/$id/product/${product.id}'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Token $token",
         },
       );
-      if (response.statusCode == 200) {
-        products.remove(prod);
-        num_items--;
-      }
+      if (response.statusCode == 200 || response.statusCode == 404) {}
     } on SocketException {
       throw Exception("No connection");
     }
@@ -95,12 +129,30 @@ class ShopList {
             email: participant['email'],
           ));
         });
+        num_ppl = listParticipants.length;
         participants = listParticipants;
-        print(participants);
       }
     } on SocketException {
       throw Exception("No connection");
     }
+  }
+
+  void showErrorDialog(String message, BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('An Error Occurred!'),
+        content: Text(message),
+        actions: <Widget>[
+          ElevatedButton(
+            child: Text('Okay'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
+    );
   }
 }
 
@@ -206,17 +258,17 @@ class ShopLists {
     }
   }
 
-  Future<void> leaveList(ShopList lst) async {
+  Future<void> leaveList(ShopList list) async {
     try {
       final response = await http.delete(
-        Uri.parse('http://10.0.2.2:8000/list/${lst.id}'),
+        Uri.parse('http://10.0.2.2:8000/list/${list.id}'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Token $token",
         },
       );
       if (response.statusCode == 200) {
-        allLists.remove(lst);
+        allLists.remove(list);
       }
     } on SocketException {
       throw Exception("No connection");

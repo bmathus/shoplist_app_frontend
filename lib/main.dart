@@ -24,12 +24,6 @@ class _MyAppState extends State<MyApp> {
     homeView = await user.tryAutoLogin();
     setState(() {
       loading = false;
-      if (homeView) {
-        // Tieto statementy literally neurobia vobec nič :D
-        homeView = true;
-      } else {
-        homeView = false;
-      }
     });
   }
 

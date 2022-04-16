@@ -111,7 +111,7 @@ class _HomeViewState extends State<HomeView> {
               SizedBox(height: 10),
               Center(
                   child: Text(
-                "You are not a member of\n any lists yet",
+                "No lists",
                 style: TextStyle(
                   color: Color.fromARGB(111, 89, 89, 89),
                   fontSize: 25,
