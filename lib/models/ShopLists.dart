@@ -275,6 +275,15 @@ class ShopLists {
     }
   }
 
+  ButtonStyle buttonstyle(Color color) => ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(color),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+
   void showErrorDialog(String message, BuildContext context) {
     showDialog(
       context: context,
@@ -283,9 +292,10 @@ class ShopLists {
         content: Text(message),
         actions: <Widget>[
           ElevatedButton(
-            child: Text('Okay'),
+            child: Text("Okay"),
+            style: buttonstyle(Color(0xFF355C7D)),
             onPressed: () {
-              Navigator.of(ctx).pop();
+              Navigator.pop(context, 'Okay');
             },
           )
         ],
