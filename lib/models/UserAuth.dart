@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import './global_settings.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -14,7 +15,7 @@ class AuthUser {
   Future<void> login({required String email, required String password}) async {
     try {
       final responce = await http.post(
-        Uri.parse('http://10.0.2.2:8000/auth-user'),
+        Uri.parse('${host}auth-user'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "username": email,
@@ -61,6 +62,15 @@ class AuthUser {
     return true;
   }
 
+  ButtonStyle buttonstyle(Color color) => ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(color),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+
   void showErrorDialog(String message, BuildContext context) {
     showDialog(
       context: context,
@@ -69,6 +79,7 @@ class AuthUser {
         content: Text(message),
         actions: <Widget>[
           ElevatedButton(
+            style: buttonstyle(Color(0xFF355C7D)),
             child: Text('Okay'),
             onPressed: () {
               Navigator.of(ctx).pop();

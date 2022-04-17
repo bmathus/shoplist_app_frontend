@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shoplist_project/models/Participant.dart';
 import 'package:shoplist_project/models/Product.dart';
 import 'package:http/http.dart' as http;
-import 'UserAuth.dart';
+import './global_settings.dart';
 
 class ShopList {
   final int id;
@@ -35,7 +35,7 @@ class ShopList {
   }) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/list/${id}/product'),
+        Uri.parse('${host}list/${id}/product'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Token $token",
@@ -67,7 +67,7 @@ class ShopList {
   Future<void> fetchProducts() async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/list/$id'),
+        Uri.parse('${host}list/$id'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Token $token",
@@ -98,7 +98,7 @@ class ShopList {
   Future<void> deleteProduct(Product product) async {
     try {
       final response = await http.delete(
-        Uri.parse('http://10.0.2.2:8000/list/$id/product/${product.id}'),
+        Uri.parse('${host}list/$id/product/${product.id}'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Token $token",
@@ -113,7 +113,7 @@ class ShopList {
   Future<void> fetchParticipants() async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/list/$id/participants'),
+        Uri.parse('${host}list/$id/participants'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Token $token",
@@ -164,7 +164,7 @@ class ShopLists {
   Future<void> fetchShopLists() async {
     try {
       final responce = await http.get(
-        Uri.parse('http://10.0.2.2:8000/lists'),
+        Uri.parse('${host}lists'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Token $token",
@@ -194,7 +194,7 @@ class ShopLists {
   Future<void> postNewList(String name) async {
     try {
       final responce = await http.post(
-        Uri.parse('http://10.0.2.2:8000/lists'),
+        Uri.parse('${host}lists'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Token $token",
@@ -223,7 +223,7 @@ class ShopLists {
   Future<void> joinList(String invite_code) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/list/invite'),
+        Uri.parse('${host}list/invite'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Token $token",
@@ -261,7 +261,7 @@ class ShopLists {
   Future<void> leaveList(ShopList list) async {
     try {
       final response = await http.delete(
-        Uri.parse('http://10.0.2.2:8000/list/${list.id}'),
+        Uri.parse('${host}list/${list.id}'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Token $token",

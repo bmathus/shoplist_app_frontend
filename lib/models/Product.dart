@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
+import './global_settings.dart';
 
 class Product {
   int id;
@@ -32,7 +33,7 @@ class Product {
   }) async {
     try {
       final response = await http.put(
-        Uri.parse('http://10.0.2.2:8000/list/${list.id}/product/$id'),
+        Uri.parse('${host}list/${list.id}/product/$id'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Token $token",
@@ -63,7 +64,7 @@ class Product {
   Future<void> editBoughtProduct(ShopList list, bool changedBought) async {
     try {
       final response = await http.put(
-        Uri.parse('http://10.0.2.2:8000/list/${list.id}/product/$id'),
+        Uri.parse('${host}list/${list.id}/product/$id'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Token $token",

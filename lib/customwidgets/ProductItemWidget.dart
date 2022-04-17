@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shoplist_project/models/Product.dart';
 import 'package:shoplist_project/models/ShopLists.dart';
-import 'package:shoplist_project/models/UserAuth.dart';
 import 'package:shoplist_project/product_view.dart';
-import 'package:shoplist_project/models/dummyLists.dart';
 
 class ProductItemWidget extends StatefulWidget {
   final Product product;
