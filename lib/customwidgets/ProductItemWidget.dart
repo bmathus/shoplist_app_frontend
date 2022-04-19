@@ -3,6 +3,7 @@ import 'package:shoplist_project/models/Product.dart';
 import 'package:shoplist_project/models/ShopLists.dart';
 import 'package:shoplist_project/views/product_view.dart';
 
+//custom widget na karticku produktu na obrazovke produktov zoznamu
 class ProductItemWidget extends StatefulWidget {
   final Product product;
   final ShopList shoplist;
@@ -15,6 +16,7 @@ class ProductItemWidget extends StatefulWidget {
 }
 
 class _ProductItemWidgetState extends State<ProductItemWidget> {
+  //funkcia na navigaciu na obrazovku detailu produktu pri kliknuti na productitemwidget
   void gotoProductView(BuildContext ctx, bool edit) {
     Navigator.of(ctx)
         .push(
@@ -25,9 +27,11 @@ class _ProductItemWidgetState extends State<ProductItemWidget> {
                     widget.product,
                   )),
         )
-        .then((value) => widget.reBuildListProductView());
+        .then((value) => widget
+            .reBuildListProductView()); //rebuild obrazovky produktov po editovany/pridani noveho produktu
   }
 
+  //funkcia na null check a odstranenie trailing 0
   String checkNull(var n) {
     if (n == null) {
       return "";
@@ -36,6 +40,8 @@ class _ProductItemWidgetState extends State<ProductItemWidget> {
     }
   }
 
+  //funkcia na volanie volania na BE na odstranenie produktu tohto widgetu
+  //pri staceni kosa a na spracovanie odpovedi a rebuild obrazovky vzhladom na ne
   void deleteProduct() async {
     Product tempProduct = widget.product;
     try {
@@ -53,6 +59,8 @@ class _ProductItemWidgetState extends State<ProductItemWidget> {
     }
   }
 
+  //funkcia na volanie volania na BE na oznacenie produktu ako nakupeny/nenakupeny
+  //funkcia je zavolana pri oznaceny/odznaceni checkboxu produktu
   void boughtEditProduct(bool changedBought) async {
     bool tempBought = widget.product.bought;
     try {
@@ -69,6 +77,7 @@ class _ProductItemWidgetState extends State<ProductItemWidget> {
   }
 
   @override
+  //build funckia widgetu produktu
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(

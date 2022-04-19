@@ -6,12 +6,16 @@ import './global_settings.dart';
 
 import 'package:http/http.dart' as http;
 
+//trieda reprezentujuca objekt prihlaseneho pouzivatela
 class AuthUser {
+  //atributy prihlaseneho pouzivatela
   late int id;
   late String name;
   late String email;
   late String token;
 
+  //funckia na volanie POST auth-user na backend
+  //teda volanie na prihlasenie pouzivatela s danymy prihlas. udajmy
   Future<void> login({required String email, required String password}) async {
     try {
       final responce = await http.post(
@@ -29,6 +33,9 @@ class AuthUser {
         this.email = body_map["email"];
         this.token = body_map["token"];
 
+        //ulozenie prihlasovacich udajov do pamate applikacie pre pripad autologinu
+        //teda v pripade ze po zavreti appky ostane user prihlaseny teda nemusi sa
+        //znova prihlasovat pri zapnuti appky
         final prefs = await SharedPreferences.getInstance();
 
         final userData = json.encode({
@@ -47,6 +54,7 @@ class AuthUser {
     }
   }
 
+  //funkcia na autologin teda nacitanie udajov prihlaseneho pouzivatela z pamate
   Future<bool> tryAutoLogin() async {
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey("userData")) {
@@ -71,6 +79,7 @@ class AuthUser {
         ),
       );
 
+  //funkcia na zobrazenie erroroveho dialogu v pripade chyby pri volaniach na BE
   void showErrorDialog(String message, BuildContext context) {
     showDialog(
       context: context,

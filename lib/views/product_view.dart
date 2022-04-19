@@ -8,6 +8,7 @@ import 'package:shoplist_project/customwidgets/ButtonWidget.dart';
 import 'package:shoplist_project/models/ShopLists.dart';
 import 'package:image_picker/image_picker.dart';
 
+//widget obrazovky detailu produktu
 class ProductView extends StatefulWidget {
   final bool edit;
   final ShopList shoplist;
@@ -24,19 +25,24 @@ class ProductView extends StatefulWidget {
 }
 
 class _ProductViewState extends State<ProductView> {
+  //kontrolery za zadane inputy pri vytvarani/editovani produktu
   TextEditingController nameController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController unitController = TextEditingController();
+  //premmene na errorove hlasky textfieldov
   String? nameError;
   String? unitError;
   String? quantityError;
   bool loading = false;
-  Uint8List? image;
+  Uint8List? image; //obrazok produktu
 
+  //funckia na odstranenie trailing 0
   String remove0(double n) {
     return n.toString().replaceAll(RegExp(r'([.]*0)(?!.*\d)'), '');
   }
 
+  //pri prvom builde widgetu v pripade editovania produktu
+  //nacitanie textfieldov udajmy
   @override
   void initState() {
     image = widget.product?.picture_base64 != null
@@ -54,6 +60,7 @@ class _ProductViewState extends State<ProductView> {
     super.initState();
   }
 
+  //funkcia na vyber obrazka z galerie
   Future<void> pickImage() async {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -69,6 +76,7 @@ class _ProductViewState extends State<ProductView> {
     }
   }
 
+  //funkcia validovania vstupov z textfieldov
   bool validators() {
     bool error = false;
     String name = nameController.text;
@@ -106,6 +114,8 @@ class _ProductViewState extends State<ProductView> {
     return error;
   }
 
+  //funkcia na spracovanie volani pridavania a editovania produktov
+  //updatovanie UI vzhladom na odpovede volani pomocou zachytenych exceptions
   void add_edit_Product() async {
     if (validators()) {
       setState(() {
@@ -153,6 +163,7 @@ class _ProductViewState extends State<ProductView> {
     }
   }
 
+  //build funkcia obrazovky
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -205,7 +216,7 @@ class _ProductViewState extends State<ProductView> {
                         onPressed: () {
                           pickImage();
                         },
-                        child: Icon(
+                        child: const Icon(
                           Icons.photo_library_rounded,
                           size: 30,
                         ),
@@ -255,14 +266,14 @@ class _ProductViewState extends State<ProductView> {
                     ),
                   ],
                 ),
-                Spacer(),
+                const Spacer(),
                 loading
-                    ? CircularProgressIndicator(
+                    ? const CircularProgressIndicator(
                         color: Color(0xFF355C7D),
                       )
                     : ButtonWidget(widget.edit ? "Save" : "Add product",
                         () => add_edit_Product()),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 )
               ],

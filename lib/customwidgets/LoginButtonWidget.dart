@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//widget buttonu ktory pouzivame pri logine
 class ButtonWidget extends StatelessWidget {
   final String title;
   final bool hasBorder;
@@ -16,19 +17,19 @@ class ButtonWidget extends StatelessWidget {
     return Material(
       child: Ink(
         decoration: BoxDecoration(
-          color: Color(0xFF355C7D),
+          color: const Color(0xFF355C7D),
           borderRadius: BorderRadius.circular(10),
           border: hasBorder
               ? Border.all(
-                  color: Color(0xFF355C7D),
+                  color: const Color(0xFF355C7D),
                   width: 1,
                 )
-              : Border.fromBorderSide(BorderSide.none),
+              : const Border.fromBorderSide(BorderSide.none),
         ),
         child: InkWell(
           onTap: () => onTap(),
           borderRadius: BorderRadius.circular(10),
-          child: Container(
+          child: SizedBox(
             height: 55,
             child: Center(
               child: Text(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//custom widget textfieldow ktore pouzivame pri logine
 class TextFieldWidget extends StatelessWidget {
   final String hintText;
   final IconData leftIcon;

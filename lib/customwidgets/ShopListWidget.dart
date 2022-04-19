@@ -3,6 +3,7 @@ import 'package:shoplist_project/models/ShopLists.dart';
 import 'package:shoplist_project/views/list_products_view.dart';
 import 'package:shoplist_project/models/UserAuth.dart';
 
+//custom widget pre karticky nakupnych zoznamov na home obrazovke
 class ShopListWidget extends StatelessWidget {
   final ShopLists lists;
   final ShopList shoplist;
@@ -15,6 +16,8 @@ class ShopListWidget extends StatelessWidget {
       required this.lists,
       required this.rebuildHomeView});
 
+  //funkcia na navigaciu na obrazovku zoznamu produktov
+  //pri kliknuti na karticku daneho zoznamu
   void gotoListProductsView(BuildContext ctx) {
     Navigator.of(ctx)
         .push(
@@ -31,6 +34,7 @@ class ShopListWidget extends StatelessWidget {
     });
   }
 
+  //build funkcia widgetu
   @override
   Widget build(BuildContext context) {
     return Material(

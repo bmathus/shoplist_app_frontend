@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'call_view.dart';
 import 'package:shoplist_project/signaling.dart';
 
+//widget obrazovky participantov daneho nakupneho zoznamu
 class ParticipantsView extends StatefulWidget {
   final AuthUser user;
   final List<Participant> participants;
@@ -26,10 +27,10 @@ class ParticipantsView extends StatefulWidget {
 
 class _ParticipantsViewState extends State<ParticipantsView> {
   Signaling signaling = Signaling();
-  RTCVideoRenderer _localRenderer = RTCVideoRenderer();
-  RTCVideoRenderer _remoteRenderer = RTCVideoRenderer();
-
-  TextEditingController textEditingController = TextEditingController(text: '');
+  RTCVideoRenderer _localRenderer =
+      RTCVideoRenderer(); // widget vlastneho obrazu z kamery
+  RTCVideoRenderer _remoteRenderer =
+      RTCVideoRenderer(); // widget obrazu z kamery druheho ucastnika hovoru
 
   @override
   void initState() {
@@ -82,6 +83,7 @@ class _ParticipantsViewState extends State<ParticipantsView> {
     gotoCallView(context, calledUserName);
   }
 
+  //funkcia na navigaciu na obrazovku hovoru
   void gotoCallView(BuildContext ctx, String callWith) {
     Navigator.of(ctx).push(
       MaterialPageRoute(
@@ -96,6 +98,7 @@ class _ParticipantsViewState extends State<ParticipantsView> {
     );
   }
 
+  //widget konretneho participanta zoznamu - karticka z jeho infom
   Widget getParticipantWidget(int id, String name, String email, bool me) {
     return Container(
       decoration: const BoxDecoration(
@@ -139,6 +142,7 @@ class _ParticipantsViewState extends State<ParticipantsView> {
     );
   }
 
+  //funckia na zostavenie a vratelie listu widgetov participantov
   List<Widget> getParticpantsListUI() {
     Widget owner = SizedBox();
     List<Widget> participList = widget.participants.map((participant) {
@@ -172,6 +176,7 @@ class _ParticipantsViewState extends State<ParticipantsView> {
     return participList;
   }
 
+  //build funckia obrazovky
   @override
   Widget build(BuildContext context) {
     return Column(

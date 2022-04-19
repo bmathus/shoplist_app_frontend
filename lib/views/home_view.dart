@@ -7,6 +7,7 @@ import 'create_and_invite_view.dart';
 import '../customwidgets/ButtonWidget.dart';
 import '../models/UserAuth.dart';
 
+//widget home obrazovky so vsetkymi zoznamamy prihlaseneho usera
 class HomeView extends StatefulWidget {
   final AuthUser user;
   final ShopLists lists;
@@ -18,8 +19,9 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  bool listsLoading = false;
+  bool listsLoading = false; //indikator nacitavania zoznamov
 
+  //funkcia na navigaciu na obrazovku vytvarania alebo joinutia zoznamu
   void gotoCreateAndInviteView(BuildContext ctx, bool create) {
     Navigator.of(ctx)
         .push(
@@ -34,6 +36,7 @@ class _HomeViewState extends State<HomeView> {
         .then((value) => setState(() {}));
   }
 
+  //funkcia na refresh zoznamov pri swipe down - yavola volanie na backend
   Future<void> refresh() async {
     try {
       await widget.lists.fetchShopLists();
@@ -41,6 +44,7 @@ class _HomeViewState extends State<HomeView> {
     } catch (e) {}
   }
 
+  //funkcia na nacitanie zoznamov z backendu a updatnutie UI podla odpovedi volani
   void loadLists() async {
     setState(() {
       listsLoading = true;
@@ -59,6 +63,7 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
+  //pri prvom builde obrazovky nacitanie zoznamov
   @override
   void initState() {
     loadLists();
@@ -72,9 +77,11 @@ class _HomeViewState extends State<HomeView> {
       centerTitle: true,
     );
 
+    //pomocne listy na rozdelenie widgetov zozonamov na privatne z zdielane
     List privateLists = [];
     List sharedLists = [];
 
+    //funkcia ktora vrati rozdeleny list widgetov zoznamov aj s ich devidermy
     List<Widget> getHomeUI() {
       widget.lists.allLists.forEach((list) {
         if (list.num_ppl == 1) {
@@ -100,14 +107,14 @@ class _HomeViewState extends State<HomeView> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               Image.asset(
                 "assets/list-is-empty.png",
                 fit: BoxFit.cover,
                 color: Color.fromARGB(83, 89, 89, 89),
               ),
-              SizedBox(height: 10),
-              Center(
+              const SizedBox(height: 10),
+              const Center(
                   child: Text(
                 "No lists",
                 style: TextStyle(

@@ -5,6 +5,7 @@ import 'views/login_view.dart';
 import 'views/home_view.dart';
 import 'models/UserAuth.dart';
 
+//main appky s inicializaciou firebase
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -23,6 +24,7 @@ class _MyAppState extends State<MyApp> {
   bool loading = true;
   bool homeView = true;
 
+  //funkcia ktora rozhodne o obrazovke
   void chooseView() async {
     homeView = await user.tryAutoLogin();
     setState(() {
@@ -41,7 +43,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: ThemeData(brightness: Brightness.dark),
       home: loading
-          ? Scaffold()
+          ? const Scaffold()
           : homeView
               ? HomeView(
                   user: user,

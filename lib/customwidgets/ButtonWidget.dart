@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//custom widget modreho buttonu ktory pouzivame na obrazovkach
 class ButtonWidget extends StatelessWidget {
   final String title;
   final Function onPressed;

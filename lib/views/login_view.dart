@@ -5,6 +5,7 @@ import '../customwidgets/LoginTextfieldWidget.dart';
 import '../customwidgets/LoginButtonWidget.dart';
 import 'package:shoplist_project/models/UserAuth.dart';
 
+//widget obrazovky loginu
 class LoginView extends StatefulWidget {
   final AuthUser user;
   LoginView({required this.user});
@@ -14,11 +15,14 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+  //kontrolery pre textfieldy vstupov
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool validatingLogin = false;
   bool validationError = false;
 
+  //funkcia vykonana pri staceni tlacidla login
+  //na spracovanie volania loginu na backend a updatovanie UI vzhladom na odpoved od backendu
   void loginPressed(BuildContext ctx) async {
     setState(() {
       validatingLogin = true;
@@ -44,6 +48,7 @@ class _LoginViewState extends State<LoginView> {
     });
   }
 
+  //funkcia na navigaciu na obrazovku home
   void gotoHomeView() {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
@@ -55,6 +60,7 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
+  //build funkcia obrazovky aj s jej jednotlivymi widgetmy UI elementov
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -80,7 +86,7 @@ class _LoginViewState extends State<LoginView> {
                   alignment: Alignment.bottomLeft,
                   height: 200,
                   padding: const EdgeInsets.only(left: 30),
-                  child: Text(
+                  child: const Text(
                     'Shoplist App',
                     style: TextStyle(
                       color: Color.fromARGB(184, 255, 255, 255),
@@ -93,7 +99,7 @@ class _LoginViewState extends State<LoginView> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(bottom: 30, right: 30, left: 30),
+            padding: const EdgeInsets.only(bottom: 30, right: 30, left: 30),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -132,7 +138,7 @@ class _LoginViewState extends State<LoginView> {
                   height: 10,
                 ),
                 validatingLogin
-                    ? CircularProgressIndicator(
+                    ? const CircularProgressIndicator(
                         color: Color(0xFF355C7D),
                       )
                     : ButtonWidget(

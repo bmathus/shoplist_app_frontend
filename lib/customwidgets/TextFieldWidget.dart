@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//custom widget tectfieldov ktory pouzivame na obrazovkzch
 class TextFieldWidget extends StatefulWidget {
   final String title;
   final String hintText;

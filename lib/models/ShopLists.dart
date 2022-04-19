@@ -1,21 +1,23 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:shoplist_project/models/Participant.dart';
 import 'package:shoplist_project/models/Product.dart';
 import 'package:http/http.dart' as http;
 import './global_settings.dart';
 
+//trieda reprezentujuca objekty s dantamy konkretnych nakupnuch zoznamov
 class ShopList {
+  //atributy zoznamu (rovnake ako v DB)
   final int id;
   final String name;
   int num_ppl;
   int num_items;
   final String invite_code;
-  List<Participant> participants;
-  List<Product> products;
-  final String token;
+
+  List<Participant> participants; //list vsetkych participantov zoznamu
+  List<Product> products; //list vsetkych produktov zoznamu
+  final String token; //token pouzivatela ktory ma tento zoznam nacitany na FE
 
   ShopList(
       {required this.id,
@@ -27,6 +29,8 @@ class ShopList {
       required this.products,
       required this.token});
 
+  //funckia na volanie POST list/{id}/product na backend
+  //teda na vytvorenie noveho produktu a ulozenie ho do DB
   Future<void> addProduct({
     required String name,
     required double? quantity,
@@ -64,6 +68,8 @@ class ShopList {
     }
   }
 
+  //funckia na volanie GET list/{id} na backend
+  //teda nacitanie vsetkych produktov zoznamu z DB
   Future<void> fetchProducts() async {
     try {
       final response = await http.get(
@@ -95,6 +101,8 @@ class ShopList {
     }
   }
 
+  //funkcia na volanie DELETE list/{id}/product{product_id} na backend
+  //teda vymazanie konkretneho produktu zo zoznamu
   Future<void> deleteProduct(Product product) async {
     try {
       final response = await http.delete(
@@ -110,6 +118,8 @@ class ShopList {
     }
   }
 
+  //funkcia na volanie GET list/{id}/participants na backend
+  //teda nacitanie vsetkych participantov z BE
   Future<void> fetchParticipants() async {
     try {
       final response = await http.get(
@@ -137,6 +147,7 @@ class ShopList {
     }
   }
 
+  //funkcia na zobrazenie error dialogu v pripade chyby pri volania na BE
   void showErrorDialog(String message, BuildContext context) {
     showDialog(
       context: context,
@@ -156,11 +167,14 @@ class ShopList {
   }
 }
 
+//trieda na ukladanie vsetkych zoznamov prihlaseneho pouzivatela
 class ShopLists {
   String token;
-  List<ShopList> allLists = [];
+  List<ShopList> allLists = []; //list vsetkych zoznamov
   ShopLists({required this.token});
 
+  //funkcia na volanie GET lists na backend
+  //teda nacitanie vsetkych zoznamov prihlaseneho pouzivatela
   Future<void> fetchShopLists() async {
     try {
       final responce = await http.get(
@@ -191,6 +205,8 @@ class ShopLists {
     }
   }
 
+  //funkcia na volanie POST lists na backend
+  //teda vytvorenie noveho zoznamu a ulozenie ho na DB
   Future<ShopList?> postNewList(String name) async {
     try {
       final responce = await http.post(
@@ -224,6 +240,8 @@ class ShopLists {
     return null;
   }
 
+  //funkcia na volanie POST list/invite na backend
+  //teda na joinutie zoznamu s danym invite kodom
   Future<ShopList?> joinList(String invite_code) async {
     try {
       final response = await http.post(
@@ -264,6 +282,8 @@ class ShopLists {
     }
   }
 
+  //funkcia na volanie DELETE list/{list_id} na backend
+  //teda na odstranenie alebo leavnutie zoznamu s danym id
   Future<void> leaveList(ShopList list) async {
     try {
       final response = await http.delete(
@@ -290,6 +310,7 @@ class ShopLists {
         ),
       );
 
+  //funckia na zobrazenie error dialogu v pripade chyby pri volaniach
   void showErrorDialog(String message, BuildContext context) {
     showDialog(
       context: context,

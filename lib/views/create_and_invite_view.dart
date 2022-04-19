@@ -4,6 +4,7 @@ import 'package:shoplist_project/models/UserAuth.dart';
 import '../customwidgets/TextFieldWidget.dart';
 import 'list_products_view.dart';
 
+//widget spolocnej obrazovky pre vytvaranie alebo joinutie nakupneho zoznamu
 class CreateAndInviteView extends StatefulWidget {
   final bool create;
   final ShopLists lists;
@@ -16,10 +17,14 @@ class CreateAndInviteView extends StatefulWidget {
 }
 
 class _CreateAndInviteViewState extends State<CreateAndInviteView> {
+  //kontroler na textfield vytvarania joinutia zoznamu
   TextEditingController controller = TextEditingController();
-  String? errorText = null;
+  String? errorText =
+      null; //error text v pripade chyby pri zadavanych vstupoch do textfieldu
   bool loading = false;
 
+  //funkcia na navigaciu na obrazovku zoznamu produktov
+  //pri uspesnom vytvoreni alebo joinuti daneho nakupneho zoznamu
   void gotoListProductsView(BuildContext ctx, ShopList shoplist) {
     Navigator.of(ctx)
         .push(
@@ -34,7 +39,10 @@ class _CreateAndInviteViewState extends State<CreateAndInviteView> {
         .then((value) => Navigator.of(context).pop());
   }
 
+  //funkcia ktora vola volanie na backend na vytvorenie zoznamu
+  //spracovanie odpovede a pripadne updatovanie UI vzhadom nato
   void createShopList() async {
+    //predtym zatvorenie klavesnice a validacia vstupu
     FocusManager.instance.primaryFocus?.unfocus();
     setState(() {
       loading = true;
@@ -72,6 +80,8 @@ class _CreateAndInviteViewState extends State<CreateAndInviteView> {
     }
   }
 
+  //funkcia ktora vola volanie na backend na vytvorenie zoznamu
+  //spracovanie odpovede a pripadne updatovanie UI vzhladom nato
   void addUserToList() async {
     FocusManager.instance.primaryFocus?.unfocus();
     setState(() {
@@ -115,15 +125,16 @@ class _CreateAndInviteViewState extends State<CreateAndInviteView> {
     }
   }
 
+  //build funckia obrazovky
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: widget.create
-            ? Text("Create shopping list")
-            : Text("Join shopping list"),
+            ? const Text("Create shopping list")
+            : const Text("Join shopping list"),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
         centerTitle: true,
@@ -142,20 +153,21 @@ class _CreateAndInviteViewState extends State<CreateAndInviteView> {
             right: 10,
           ),
           loading
-              ? Padding(
+              ? const Padding(
                   padding: EdgeInsets.only(left: 11, right: 11),
                   child: LinearProgressIndicator(
                     minHeight: 2,
                     color: Color(0xFF355C7D),
                   ),
                 )
-              : SizedBox(),
+              : const SizedBox(),
           ElevatedButton(
             onPressed:
                 widget.create ? () => createShopList() : () => addUserToList(),
-            child: widget.create ? Text("Create") : Text("Join"),
+            child: widget.create ? const Text("Create") : const Text("Join"),
             style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Color(0xFF355C7D)),
+                backgroundColor:
+                    MaterialStateProperty.all(const Color(0xFF355C7D)),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),

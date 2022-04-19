@@ -6,15 +6,15 @@ import 'package:shoplist_project/customwidgets/ProductItemWidget.dart';
 import '../customwidgets/ButtonWidget.dart';
 import 'package:shoplist_project/views/product_view.dart';
 import 'participants_view.dart';
-import '../models/Product.dart';
 import '../models/UserAuth.dart';
 
+//widget obrazovky zoznamu produktov v nakupnom zozname
 class ListProductsView extends StatefulWidget {
   final ShopLists lists;
   final ShopList shoplist;
   final AuthUser user;
 
-  const ListProductsView({
+  ListProductsView({
     required this.shoplist,
     required this.user,
     required this.lists,
@@ -25,9 +25,11 @@ class ListProductsView extends StatefulWidget {
 }
 
 class _ListProductsViewState extends State<ListProductsView> {
-  int selectedIndexNavBar = 0;
-  bool productLoading = false;
+  int selectedIndexNavBar =
+      0; //ak 0 tak obrazovka zoznamu ak 1 tak obrazovka participantov
+  bool productLoading = false; //indikator nacitavania pri staceni tlacidla
 
+  //funkcia na navigaciu na obrazovku detailu produktu
   void gotoProductView(BuildContext ctx, bool edit) {
     Navigator.of(ctx)
         .push(
@@ -38,7 +40,8 @@ class _ListProductsViewState extends State<ListProductsView> {
                     null,
                   )),
         )
-        .then((_) => setState(() {}));
+        .then((_) => setState(
+            () {})); //po vrateni spat na obrazovku zoznamu rebuild obrazovky
   }
 
   void onNavItemTapped(int index) {
@@ -47,8 +50,10 @@ class _ListProductsViewState extends State<ListProductsView> {
     });
   }
 
+  //funkcia na rebuild obrazovky
   void reBuildThisView() => setState(() => {});
 
+  //funkcia na refresh produktov teda volanie na backend pri swipe down
   Future<void> refreshProducts() async {
     try {
       await widget.shoplist.fetchProducts();
@@ -56,6 +61,8 @@ class _ListProductsViewState extends State<ListProductsView> {
     } catch (e) {}
   }
 
+  //funckia na nacitanie vsetkych produktov a participantov z backendu
+  //a vhladom na odpovede volani updatovanie UI
   void loadProductsANDParticipants() async {
     setState(() {
       productLoading = true;
@@ -75,6 +82,8 @@ class _ListProductsViewState extends State<ListProductsView> {
     });
   }
 
+  //funckia na refresh obrazovky participantov pri swipe down
+  //teda volanie na fetchnutie participantov z backendu
   Future<void> refreshParticipants() async {
     try {
       await widget.shoplist.fetchParticipants();
@@ -82,12 +91,14 @@ class _ListProductsViewState extends State<ListProductsView> {
     } catch (e) {}
   }
 
+  //pri prvom builde widgetu nacitanie produktov a participantov z backendu
   @override
   void initState() {
     loadProductsANDParticipants();
     super.initState();
   }
 
+  //funkcia na volanie endpointu na vymazanie/leavnutie zoznamu
   void leaveOrDeleteList(BuildContext context) async {
     Navigator.pop(context, 'Delete');
     try {
@@ -96,13 +107,15 @@ class _ListProductsViewState extends State<ListProductsView> {
     Navigator.pop(context);
   }
 
+  //build funkcia obrazovky
   @override
   Widget build(BuildContext context) {
+    //widget appbaru
     AppBar appBar = AppBar(
       title: Text(widget.shoplist.name),
       centerTitle: true,
       leading: IconButton(
-        icon: Icon(Icons.home_rounded, size: 30),
+        icon: const Icon(Icons.home_rounded, size: 30),
         onPressed: () => Navigator.of(context).pop(),
       ),
     );
@@ -116,6 +129,7 @@ class _ListProductsViewState extends State<ListProductsView> {
           ),
         );
 
+    //widget dialogoveho okna v pripade vymazania/leavnutia zoznamu
     AlertDialog alert = AlertDialog(
       title: Text((widget.shoplist.num_ppl == 1 ? "Delete" : "Leave") +
           ' ${widget.shoplist.name}?'),
@@ -140,21 +154,22 @@ class _ListProductsViewState extends State<ListProductsView> {
       ],
     );
 
+    //widget buttonu na vymazanie/leavnutie zoznamu
     Widget deleteButton = Container(
       height: 32,
       width: 100,
-      margin: EdgeInsets.all(6),
+      margin: const EdgeInsets.all(6),
       child: ElevatedButton.icon(
         onPressed: () => showDialog(
             context: context,
             builder: (BuildContext context) {
               return alert;
             }),
-        icon: Icon(Icons.close_rounded),
+        icon: const Icon(Icons.close_rounded),
         label: Text(widget.shoplist.num_ppl == 1 ? "Delete" : "Leave"),
         style: ButtonStyle(
           backgroundColor:
-              MaterialStateProperty.all(Color.fromARGB(255, 104, 59, 64)),
+              MaterialStateProperty.all(const Color.fromARGB(255, 104, 59, 64)),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
@@ -164,9 +179,11 @@ class _ListProductsViewState extends State<ListProductsView> {
       ),
     );
 
+    //pomocne listy na rozdelenie widgetov produktov na zakupene a nezakupene
     List boughtProducts = [];
     List notboughtProducts = [];
 
+    //funkcia buldnutia UI obrazovk
     Widget buildProductListUI() {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -194,17 +211,17 @@ class _ListProductsViewState extends State<ListProductsView> {
                             ...boughtProducts,
                           ])
                         : SingleChildScrollView(
-                            physics: AlwaysScrollableScrollPhysics(),
+                            physics: const AlwaysScrollableScrollPhysics(),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                SizedBox(height: 30),
+                                const SizedBox(height: 30),
                                 Image.asset(
                                   "assets/list-is-empty.png",
                                   fit: BoxFit.cover,
                                   color: Color.fromARGB(83, 89, 89, 89),
                                 ),
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
                                 const Text(
                                   "No products",
                                   style: TextStyle(
@@ -218,13 +235,14 @@ class _ListProductsViewState extends State<ListProductsView> {
                           ),
                   ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           ButtonWidget("Add product", () => gotoProductView(context, false)),
-          SizedBox(height: 8)
+          const SizedBox(height: 8)
         ],
       );
     }
 
+    //widget funkcia ktora rozdeluje widgety produktov a zostavuje ich UI
     Widget makeProductWidgets() {
       Widget divider = const Divider(
         color: Color.fromARGB(66, 255, 255, 255),
@@ -250,6 +268,7 @@ class _ListProductsViewState extends State<ListProductsView> {
       return buildProductListUI();
     }
 
+    //return build funkcia
     return Scaffold(
       appBar: appBar,
       body: SafeArea(
@@ -266,7 +285,7 @@ class _ListProductsViewState extends State<ListProductsView> {
               ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Color.fromARGB(255, 0, 158, 142),
+        selectedItemColor: const Color.fromARGB(255, 0, 158, 142),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_bag_rounded),

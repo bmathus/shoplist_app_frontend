@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//custom widget ktory pouzivame na oznacenie/oddelenie privatnych/verejnych zoznamov a nakupenych produktov
 class DeviderWidget extends StatelessWidget {
   final String title;
 

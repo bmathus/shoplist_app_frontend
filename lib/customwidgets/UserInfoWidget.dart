@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shoplist_project/views/home_view.dart';
 import 'package:shoplist_project/views/login_view.dart';
 import 'package:shoplist_project/models/UserAuth.dart';
 
+//custom widget ktory zobrazuje info o prihlasenom pouzivatelovy spolu s logout buttonom
+//na home obrazovke
 class UserInfoWidget extends StatelessWidget {
   final AuthUser user;
   const UserInfoWidget({required this.user});
@@ -24,11 +25,11 @@ class UserInfoWidget extends StatelessWidget {
 
     return Container(
       height: 77,
-      padding: EdgeInsets.all(5),
-      margin: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(5),
+      margin: const EdgeInsets.all(10),
       width: MediaQuery.of(context).size.width - 20,
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 59, 58, 58),
+        color: const Color.fromARGB(255, 59, 58, 58),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: Colors.black26, width: 1),
       ),
@@ -49,7 +50,7 @@ class UserInfoWidget extends StatelessWidget {
             children: [
               Text(
                 user.name,
-                style: TextStyle(
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
@@ -57,10 +58,10 @@ class UserInfoWidget extends StatelessWidget {
               Text(user.email),
             ],
           ),
-          Spacer(),
+          const Spacer(),
           ElevatedButton(
             onPressed: () => logout(),
-            child: Text("Log-out"),
+            child: const Text("Log-out"),
             style: ButtonStyle(
               backgroundColor:
                   MaterialStateProperty.all(Color.fromARGB(255, 104, 59, 64)),
@@ -71,7 +72,7 @@ class UserInfoWidget extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 10,
           )
         ],
