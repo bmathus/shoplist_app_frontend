@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import './models/Product.dart';
+import '../models/Product.dart';
 import 'package:shoplist_project/customwidgets/TextFieldWidget.dart';
 import 'package:shoplist_project/customwidgets/ButtonWidget.dart';
 import 'package:shoplist_project/models/ShopLists.dart';
@@ -27,12 +27,15 @@ class _ProductViewState extends State<ProductView> {
   TextEditingController nameController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController unitController = TextEditingController();
-  bool validateName = false;
-  bool validateLength = false;
-  bool validateQuantity = false;
-  bool validateUnit = false;
+  String? nameError;
+  String? unitError;
+  String? quantityError;
   bool loading = false;
   Uint8List? image;
+
+  String remove0(double n) {
+    return n.toString().replaceAll(RegExp(r'([.]*0)(?!.*\d)'), '');
+  }
 
   @override
   void initState() {
@@ -44,7 +47,7 @@ class _ProductViewState extends State<ProductView> {
       nameController.text = widget.product!.name;
       quantityController.text = widget.product!.quantity == null
           ? ""
-          : widget.product!.quantity.toString();
+          : remove0(widget.product!.quantity!);
       unitController.text = (widget.product!.unit ?? "");
     }
 
@@ -71,52 +74,44 @@ class _ProductViewState extends State<ProductView> {
     String name = nameController.text;
     String qty = quantityController.text;
     String unit = unitController.text;
+
+    if (qty.contains(',')) {
+      quantityController.text = qty.replaceFirst(RegExp(','), '.');
+      qty = quantityController.text;
+    }
+    setState(() {
+      loading = true;
+      nameError = null;
+      unitError = null;
+      quantityError = null;
+    });
+
     if (name.isEmpty) {
-      setState(() {
-        loading = false;
-        validateName = true;
-        error = true;
-      });
-    } else if (name.length > 20) {
-      setState(() {
-        loading = false;
-        validateLength = true;
-        error = true;
-      });
-    } else {
-      setState(() {
-        loading = true;
-        validateName = false;
-      });
+      nameError = "Name is required";
+      error = true;
     }
-    if (qty.length > 4) {
-      setState(() {
-        loading = false;
-        validateQuantity = true;
-        error = true;
-      });
-    } else if (qty.contains(',')) {
-      quantityController.text =
-          quantityController.text.replaceFirst(RegExp(','), '.');
-    } else {
-      loading = true;
-      validateQuantity = false;
+    if (name.length > 20) {
+      nameError = "Name can be max. 20 characters long";
+      error = true;
     }
-    if (unit.length > 5) {
-      setState(() {
-        loading = false;
-        validateUnit = true;
-        error = true;
-      });
-    } else {
-      loading = true;
-      validateUnit = false;
+    if (qty.length > 10) {
+      quantityError = "Max. 10 char. long number";
+      error = true;
     }
+    if (unit.length > 10) {
+      unitError = "Max. 10 characters";
+      error = true;
+    }
+
     return error;
   }
 
   void add_edit_Product() async {
-    if (!validators()) {
+    if (validators()) {
+      setState(() {
+        loading = false;
+      });
+    } else {
       try {
         if (widget.edit) {
           await widget.product!.editProduct(
@@ -188,7 +183,7 @@ class _ProductViewState extends State<ProductView> {
                       height: (mediaQuery.size.height -
                               appBar.preferredSize.height -
                               mediaQuery.padding.top) *
-                          0.45,
+                          0.40,
                       child: image != null
                           ? Image.memory(
                               image!,
@@ -224,11 +219,7 @@ class _ProductViewState extends State<ProductView> {
                   ],
                 ),
                 TextFieldWidget(
-                  errorText: validateName
-                      ? "Name is required"
-                      : (validateLength
-                          ? "Must contain max. 20 characters"
-                          : null),
+                  errorText: nameError,
                   controller: nameController,
                   title: "Product name",
                   hintText: "Enter name",
@@ -241,9 +232,7 @@ class _ProductViewState extends State<ProductView> {
                   children: [
                     Expanded(
                       child: TextFieldWidget(
-                        errorText: validateQuantity
-                            ? "Must contain at most 4 digits"
-                            : null,
+                        errorText: quantityError,
                         keyboardType: TextInputType.number,
                         controller: quantityController,
                         title: "Quantity",
@@ -255,9 +244,7 @@ class _ProductViewState extends State<ProductView> {
                     ),
                     Expanded(
                       child: TextFieldWidget(
-                        errorText: validateUnit
-                            ? "Must contain at most 5 characters"
-                            : null,
+                        errorText: unitError,
                         controller: unitController,
                         title: "Unit",
                         hintText: "enter unit",
@@ -270,7 +257,9 @@ class _ProductViewState extends State<ProductView> {
                 ),
                 Spacer(),
                 loading
-                    ? CircularProgressIndicator()
+                    ? CircularProgressIndicator(
+                        color: Color(0xFF355C7D),
+                      )
                     : ButtonWidget(widget.edit ? "Save" : "Add product",
                         () => add_edit_Product()),
                 SizedBox(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shoplist_project/models/Product.dart';
 import 'package:shoplist_project/models/ShopLists.dart';
-import 'package:shoplist_project/product_view.dart';
+import 'package:shoplist_project/views/product_view.dart';
 
 class ProductItemWidget extends StatefulWidget {
   final Product product;
@@ -32,7 +32,7 @@ class _ProductItemWidgetState extends State<ProductItemWidget> {
     if (n == null) {
       return "";
     } else {
-      return n.toString();
+      return n.toString().replaceAll(RegExp(r'([.]*0)(?!.*\d)'), '');
     }
   }
 
@@ -78,7 +78,10 @@ class _ProductItemWidgetState extends State<ProductItemWidget> {
         ),
       ),
       child: ListTile(
-        title: Text(widget.product.name),
+        title: Text(
+          widget.product.name,
+          overflow: TextOverflow.ellipsis,
+        ),
         onTap: () => gotoProductView(context, true),
         contentPadding: EdgeInsets.zero,
         horizontalTitleGap: 0,
@@ -94,6 +97,7 @@ class _ProductItemWidgetState extends State<ProductItemWidget> {
               child: Text(
                 "${checkNull(widget.product.quantity)} ${widget.product.unit ?? ""}",
                 style: TextStyle(fontSize: 15),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             const VerticalDivider(

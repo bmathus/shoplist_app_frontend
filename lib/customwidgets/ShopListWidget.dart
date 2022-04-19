@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shoplist_project/models/ShopLists.dart';
-import 'package:shoplist_project/list_products_view.dart';
+import 'package:shoplist_project/views/list_products_view.dart';
 import 'package:shoplist_project/models/UserAuth.dart';
 
 class ShopListWidget extends StatelessWidget {

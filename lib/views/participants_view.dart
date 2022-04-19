@@ -1,22 +1,102 @@
 import 'package:flutter/material.dart';
 import 'package:shoplist_project/models/Participant.dart';
-import 'package:shoplist_project/models/ShopLists.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:shoplist_project/models/UserAuth.dart';
-import 'customwidgets/DeviderWidget.dart';
+import '../customwidgets/DeviderWidget.dart';
+import 'package:shoplist_project/models/Call.dart';
 import 'package:flutter/services.dart';
+import 'call_view.dart';
+import 'package:shoplist_project/signaling.dart';
 
-class ParticipantsView extends StatelessWidget {
+class ParticipantsView extends StatefulWidget {
   final AuthUser user;
   final List<Participant> participants;
   final String invite_code;
+  final Call call;
 
-  ParticipantsView({
-    required this.user,
-    required this.participants,
-    required this.invite_code,
-  });
+  ParticipantsView(
+      {required this.user,
+      required this.participants,
+      required this.invite_code,
+      required this.call});
 
-  Widget getParticipantWidget(String name, String email, bool me) {
+  @override
+  State<ParticipantsView> createState() => _ParticipantsViewState();
+}
+
+class _ParticipantsViewState extends State<ParticipantsView> {
+  Signaling signaling = Signaling();
+  RTCVideoRenderer _localRenderer = RTCVideoRenderer();
+  RTCVideoRenderer _remoteRenderer = RTCVideoRenderer();
+
+  TextEditingController textEditingController = TextEditingController(text: '');
+
+  @override
+  void initState() {
+    //inicializujeme local aj remote stream
+    _localRenderer.initialize();
+    _remoteRenderer.initialize();
+
+    //ked nastane novy stream od remote tak ho ulozi do remote renderer
+    //a setstate aby sme videli to video
+    signaling.onAddRemoteStream = ((stream) {
+      _remoteRenderer.srcObject = stream;
+      setState(() {});
+    });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _localRenderer.dispose();
+    _remoteRenderer.dispose();
+    super.dispose();
+  }
+
+  void callUser(
+    int calledUserID,
+    String calledUserEmail,
+    String calledUserName,
+  ) async {
+    await signaling.openUserMedia(_localRenderer, _remoteRenderer);
+    try {
+      var room_id = await widget.call.call_room_check(calledUserID);
+      if (room_id == null) {
+        room_id = await signaling.createRoom(_remoteRenderer);
+      } else {
+        signaling.joinRoom(room_id, _remoteRenderer);
+      }
+      widget.call.postCall(room_id, calledUserEmail);
+    } on Exception catch (e) {
+      if (e.toString() == "Exception: No connection") {
+        widget.call
+            .showErrorDialog("An Error Occurred!", "No connection", context);
+        return;
+      } else if (e.toString() == "Exception: The user is already in a call") {
+        widget.call.showErrorDialog("User is in a call",
+            "The user is calling with someone else", context);
+        return;
+      }
+    }
+    gotoCallView(context, calledUserName);
+  }
+
+  void gotoCallView(BuildContext ctx, String callWith) {
+    Navigator.of(ctx).push(
+      MaterialPageRoute(
+        builder: (ctx) => CallView(
+          callWith: callWith,
+          localRenderer: _localRenderer,
+          remoteRenderer: _remoteRenderer,
+          signaling: signaling,
+          call: widget.call,
+        ),
+      ),
+    );
+  }
+
+  Widget getParticipantWidget(int id, String name, String email, bool me) {
     return Container(
       decoration: const BoxDecoration(
         color: Color.fromARGB(255, 43, 43, 43),
@@ -50,7 +130,7 @@ class ParticipantsView extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 6),
                     child: IconButton(
                       icon: const Icon(Icons.phone, size: 28),
-                      onPressed: () {},
+                      onPressed: () => callUser(id, email, name),
                     ),
                   ),
                 ],
@@ -61,13 +141,22 @@ class ParticipantsView extends StatelessWidget {
 
   List<Widget> getParticpantsListUI() {
     Widget owner = SizedBox();
-    List<Widget> participList = participants.map((participant) {
-      if (participant.id == user.id) {
+    List<Widget> participList = widget.participants.map((participant) {
+      if (participant.id == widget.user.id) {
         owner = getParticipantWidget(
-            "${participant.name} (You)", participant.email, true);
+          participant.id,
+          "${participant.name} (You)",
+          participant.email,
+          true,
+        );
         return SizedBox();
       } else {
-        return getParticipantWidget(participant.name, participant.email, false);
+        return getParticipantWidget(
+          participant.id,
+          participant.name,
+          participant.email,
+          false,
+        );
       }
     }).toList();
 
@@ -104,11 +193,11 @@ class ParticipantsView extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 5),
-              Text(invite_code),
+              Text(widget.invite_code),
               const SizedBox(height: 5),
               ElevatedButton(
                 onPressed: () {
-                  Clipboard.setData(ClipboardData(text: invite_code));
+                  Clipboard.setData(ClipboardData(text: widget.invite_code));
                 },
                 child: const Text("Copy code"),
                 style: ButtonStyle(

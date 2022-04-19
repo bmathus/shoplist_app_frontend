@@ -191,7 +191,7 @@ class ShopLists {
     }
   }
 
-  Future<void> postNewList(String name) async {
+  Future<ShopList?> postNewList(String name) async {
     try {
       final responce = await http.post(
         Uri.parse('${host}lists'),
@@ -205,7 +205,7 @@ class ShopLists {
       );
       if (responce.statusCode == 200) {
         var bodyMap = jsonDecode(responce.body);
-        allLists.add(ShopList(
+        ShopList shoplist = ShopList(
             id: bodyMap['id'],
             name: bodyMap['name'],
             num_ppl: bodyMap['num_ppl'],
@@ -213,14 +213,18 @@ class ShopLists {
             invite_code: bodyMap['invite_code'],
             participants: [],
             products: [],
-            token: token));
+            token: token);
+
+        allLists.add(shoplist);
+        return shoplist;
       }
     } on SocketException {
       throw Exception("No connection");
     }
+    return null;
   }
 
-  Future<void> joinList(String invite_code) async {
+  Future<ShopList?> joinList(String invite_code) async {
     try {
       final response = await http.post(
         Uri.parse('${host}list/invite'),
@@ -234,7 +238,7 @@ class ShopLists {
       );
       if (response.statusCode == 200) {
         var bodyMap = jsonDecode(response.body);
-        allLists.add(ShopList(
+        ShopList shoplist = ShopList(
             id: bodyMap["id"],
             name: bodyMap["name"],
             num_ppl: bodyMap["num_ppl"],
@@ -242,7 +246,9 @@ class ShopLists {
             invite_code: bodyMap["invite_code"],
             participants: [],
             products: [],
-            token: token));
+            token: token);
+        allLists.add(shoplist);
+        return shoplist;
       } else if (response.statusCode == 404) {
         throw Exception("List does not exist");
       } else if (response.statusCode == 400) {

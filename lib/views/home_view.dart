@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shoplist_project/models/ShopLists.dart';
-import './customwidgets/UserInfoWidget.dart';
-import './customwidgets/ShopListWidget.dart';
-import './customwidgets/DeviderWidget.dart';
+import '../customwidgets/UserInfoWidget.dart';
+import '../customwidgets/ShopListWidget.dart';
+import '../customwidgets/DeviderWidget.dart';
 import 'create_and_invite_view.dart';
-import 'customwidgets/ButtonWidget.dart';
-import 'models/UserAuth.dart';
+import '../customwidgets/ButtonWidget.dart';
+import '../models/UserAuth.dart';
 
 class HomeView extends StatefulWidget {
   final AuthUser user;
@@ -27,6 +27,7 @@ class _HomeViewState extends State<HomeView> {
             builder: (ctx) => CreateAndInviteView(
               create: create,
               lists: widget.lists,
+              user: widget.user,
             ),
           ),
         )
@@ -66,9 +67,6 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    print('builduje home view');
-    final mediaQuery = MediaQuery.of(context);
-
     AppBar appBar = AppBar(
       title: const Text('Home'),
       centerTitle: true,
@@ -146,7 +144,9 @@ class _HomeViewState extends State<HomeView> {
             Expanded(
               child: listsLoading
                   ? const Center(
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF355C7D),
+                      ),
                     )
                   : RefreshIndicator(
                       child: ListView(children: getHomeUI()),

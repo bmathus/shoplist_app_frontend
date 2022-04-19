@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shoplist_project/home_view.dart';
-import 'package:shoplist_project/login_view.dart';
+import 'package:shoplist_project/views/home_view.dart';
+import 'package:shoplist_project/views/login_view.dart';
 import 'package:shoplist_project/models/UserAuth.dart';
 
 class UserInfoWidget extends StatelessWidget {

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:shoplist_project/customwidgets/DeviderWidget.dart';
 import 'package:shoplist_project/models/ShopLists.dart';
-import './home_view.dart';
+import 'package:shoplist_project/models/Call.dart';
 import 'package:shoplist_project/customwidgets/ProductItemWidget.dart';
-import 'customwidgets/ButtonWidget.dart';
-import 'package:shoplist_project/product_view.dart';
-import './participants_view.dart';
-import 'models/Product.dart';
-import 'models/UserAuth.dart';
+import '../customwidgets/ButtonWidget.dart';
+import 'package:shoplist_project/views/product_view.dart';
+import 'participants_view.dart';
+import '../models/Product.dart';
+import '../models/UserAuth.dart';
 
 class ListProductsView extends StatefulWidget {
   final ShopLists lists;
@@ -98,8 +98,6 @@ class _ListProductsViewState extends State<ListProductsView> {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-
     AppBar appBar = AppBar(
       title: Text(widget.shoplist.name),
       centerTitle: true,
@@ -177,7 +175,9 @@ class _ListProductsViewState extends State<ListProductsView> {
           Expanded(
             child: productLoading
                 ? const Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      color: Color(0xFF355C7D),
+                    ),
                   )
                 : RefreshIndicator(
                     onRefresh: refreshProducts,
@@ -258,9 +258,11 @@ class _ListProductsViewState extends State<ListProductsView> {
             : RefreshIndicator(
                 onRefresh: refreshParticipants,
                 child: ParticipantsView(
-                    user: widget.user,
-                    participants: widget.shoplist.participants,
-                    invite_code: widget.shoplist.invite_code),
+                  user: widget.user,
+                  participants: widget.shoplist.participants,
+                  invite_code: widget.shoplist.invite_code,
+                  call: Call(token: widget.user.token),
+                ),
               ),
       ),
       bottomNavigationBar: BottomNavigationBar(
